@@ -40,7 +40,7 @@ private:
 
 class Babylon {
 public:
-    Babylon(const std::string& model_path, const std::string& config_path);
+    Babylon(const std::string& model_path);
     ~Babylon();
 
     std::vector<std::string> GraphemeToPhoneme(const std::string& text, const std::string& language);

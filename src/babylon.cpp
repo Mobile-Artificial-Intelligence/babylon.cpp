@@ -1,8 +1,7 @@
 #include "babylon.hpp"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
-#include <fstream>
-#include "external/json.hpp"
+#include <algorithm>
 
 LanguageTokenizer::LanguageTokenizer(const std::vector<std::string>& languages) {
     for (size_t i = 0; i < languages.size(); ++i) {
@@ -111,7 +110,7 @@ std::string SequenceTokenizer::make_start_token(const std::string& language) con
     return "<" + language + ">";
 }
 
-Babylon::Babylon(const std::string& model_path, const std::string& config_path) {
+Babylon::Babylon(const std::string& model_path) {
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Babylon");
     Ort::SessionOptions session_options;
     session_options.SetIntraOpNumThreads(1);
@@ -119,20 +118,15 @@ Babylon::Babylon(const std::string& model_path, const std::string& config_path) 
     
     session = new Ort::Session(env, model_path.c_str(), session_options);
 
-    // Load and parse the config file
-    std::ifstream config_file(config_path);
-    Json::Value config;
-    config_file >> config;
-
-    // Initialize tokenizers
-    std::vector<std::string> languages = config["preprocessing"]["languages"].as<std::vector<std::string>>();
-    std::vector<std::string> text_symbols = config["preprocessing"]["text_symbols"].as<std::vector<std::string>>();
-    std::vector<std::string> phoneme_symbols = config["preprocessing"]["phoneme_symbols"].as<std::vector<std::string>>();
-    int char_repeats = config["preprocessing"]["char_repeats"].as<int>();
-    bool lowercase = config["preprocessing"]["lowercase"].as<bool>();
+    // Static configuration
+    std::vector<std::string> languages = {"de", "en_us"};
+    std::string text_symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüÄÖÜß";
+    std::vector<std::string> phoneme_symbols = {"a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z", "æ", "ç", "ð", "ø", "ŋ", "œ", "ɐ", "ɑ", "ɔ", "ə", "ɛ", "ɝ", "ɹ", "ɡ", "ɪ", "ʁ", "ʃ", "ʊ", "ʌ", "ʏ", "ʒ", "ʔ", "ˈ", "ˌ", "ː", "̃", "̍", "̥", "̩", "̯", "͡", "θ"};
+    int char_repeats = 1;
+    bool lowercase = true;
 
     lang_tokenizer = new LanguageTokenizer(languages);
-    text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
+    text_tokenizer = new SequenceTokenizer(std::vector<std::string>(text_symbols.begin(), text_symbols.end()), languages, char_repeats, lowercase);
     phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
 }
 

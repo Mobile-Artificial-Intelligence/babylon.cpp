@@ -2,7 +2,7 @@
 #include <iostream>
 
 int main() {
-    Babylon babylon("models/deep_phonemizer.onnx", "config.json");
+    Babylon babylon("models/deep_phonemizer.onnx");
     std::string text = "hello";
     std::string language = "en";
 

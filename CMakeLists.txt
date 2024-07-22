@@ -72,14 +72,20 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
     endif()
 endif()
 
-target_link_libraries(
-    babylon
-    onyxruntime
-)
-
 # set include directories
 target_include_directories(
     babylon
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${ONNXRUNTIME_DIR}/include
 )
+
+# Link against the appropriate ONNX Runtime library
+if(WIN32)
+    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/onnxruntime.lib)
+elseif(APPLE)
+    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
+else()
+    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
+endif()
+
+add_subdirectory(example)
