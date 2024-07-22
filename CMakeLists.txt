@@ -79,6 +79,7 @@ target_link_libraries(
 
 # set include directories
 target_include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    babylon
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${ONNXRUNTIME_DIR}/include
 )
