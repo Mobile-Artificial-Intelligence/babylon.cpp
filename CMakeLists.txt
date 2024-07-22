@@ -8,6 +8,9 @@ project(
     LANGUAGES CXX
 )
 
+set(CMAKE_CXX_STANDARD 11) # Enable C++11
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 add_library(
     babylon
     src/babylon.cpp

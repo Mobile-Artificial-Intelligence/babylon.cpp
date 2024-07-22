@@ -120,13 +120,25 @@ Babylon::Babylon(const std::string& model_path) {
 
     // Static configuration
     std::vector<std::string> languages = {"de", "en_us"};
-    std::string text_symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZäöüÄÖÜß";
-    std::vector<std::string> phoneme_symbols = {"a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z", "æ", "ç", "ð", "ø", "ŋ", "œ", "ɐ", "ɑ", "ɔ", "ə", "ɛ", "ɝ", "ɹ", "ɡ", "ɪ", "ʁ", "ʃ", "ʊ", "ʌ", "ʏ", "ʒ", "ʔ", "ˈ", "ˌ", "ː", "̃", "̍", "̥", "̩", "̯", "͡", "θ"};
+    std::vector<std::string> text_symbols = {
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+        "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß"
+    };
+    std::vector<std::string> phoneme_symbols = {
+        "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", 
+        "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z", "æ", "ç", 
+        "ð", "ø", "ŋ", "œ", "ɐ", "ɑ", "ɔ", "ə", "ɛ", "ɝ", "ɹ", "ɡ", "ɪ", 
+        "ʁ", "ʃ", "ʊ", "ʌ", "ʏ", "ʒ", "ʔ", "ˈ", "ˌ", "ː", "̃", "̍", "̥", "̩", 
+        "̯", "͡", "θ"
+    };
     int char_repeats = 1;
     bool lowercase = true;
 
     lang_tokenizer = new LanguageTokenizer(languages);
-    text_tokenizer = new SequenceTokenizer(std::vector<std::string>(text_symbols.begin(), text_symbols.end()), languages, char_repeats, lowercase);
+    text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
     phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
 }
 
