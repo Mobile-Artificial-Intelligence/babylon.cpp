@@ -156,7 +156,8 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     // Convert input text to tensor
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
-    Ort::Value input_tensor = Ort::Value::CreateTensor<int64_t>(allocator, input_ids.data(), input_shape.data(), input_shape.size());
+    Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
+    Ort::Value input_tensor = Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size());
 
     const char* input_names[] = {"text"};
     const char* output_names[] = {"output"};
