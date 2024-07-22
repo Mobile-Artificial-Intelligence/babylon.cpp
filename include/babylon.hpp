@@ -20,8 +20,8 @@ private:
 class SequenceTokenizer {
 public:
     SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
-    std::vector<int> operator()(const std::string& sentence, const std::string& language) const;
-    std::string decode(const std::vector<int>& sequence, bool remove_special_tokens = false) const;
+    std::vector<int64_t> operator()(const std::string& sentence, const std::string& language) const;
+    std::string decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
 
 private:
     std::unordered_map<std::string, int> token_to_idx;
@@ -53,4 +53,4 @@ private:
     SequenceTokenizer* phoneme_tokenizer;
 };
 
-#endif // BABYLON_H
+#endif // BABYLON_HPP

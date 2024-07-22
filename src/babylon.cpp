@@ -51,13 +51,13 @@ SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, co
     }
 }
 
-std::vector<int> SequenceTokenizer::operator()(const std::string& sentence, const std::string& language) const {
+std::vector<int64_t> SequenceTokenizer::operator()(const std::string& sentence, const std::string& language) const {
     std::string processed_sentence = sentence;
     if (lowercase) {
         std::transform(processed_sentence.begin(), processed_sentence.end(), processed_sentence.begin(), ::tolower);
     }
 
-    std::vector<int> sequence;
+    std::vector<int64_t> sequence;
     for (char c : processed_sentence) {
         std::string symbol(1, c);
         auto it = token_to_idx.find(symbol);
@@ -76,8 +76,8 @@ std::vector<int> SequenceTokenizer::operator()(const std::string& sentence, cons
     return sequence;
 }
 
-std::string SequenceTokenizer::decode(const std::vector<int>& sequence, bool remove_special_tokens) const {
-    std::vector<int> processed_sequence;
+std::string SequenceTokenizer::decode(const std::vector<int64_t>& sequence, bool remove_special_tokens) const {
+    std::vector<int64_t> processed_sequence;
     if (append_start_end) {
         processed_sequence.push_back(sequence.front());
         for (size_t i = 1; i < sequence.size() - 1; i += char_repeats) {
@@ -91,7 +91,7 @@ std::string SequenceTokenizer::decode(const std::vector<int>& sequence, bool rem
     }
 
     std::string decoded;
-    for (int token : processed_sequence) {
+    for (int64_t token : processed_sequence) {
         if (remove_special_tokens && special_tokens.count(idx_to_token.at(token))) {
             continue;
         }
@@ -156,7 +156,7 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     // Convert input text to tensor
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
-    Ort::Value input_tensor = Ort::Value::CreateTensor<int64_t>(allocator, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size());
+    Ort::Value input_tensor = Ort::Value::CreateTensor<int64_t>(allocator, input_ids.data(), input_shape.data(), input_shape.size());
 
     const char* input_names[] = {"text"};
     const char* output_names[] = {"output"};
@@ -166,7 +166,7 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     int64_t* output_ids = output_tensors.front().GetTensorMutableData<int64_t>();
     std::vector<int64_t> output_shape = output_tensors.front().GetTensorTypeAndShapeInfo().GetShape();
 
-    std::vector<int> output_ids_vector(output_ids, output_ids + output_shape[1]);
+    std::vector<int64_t> output_ids_vector(output_ids, output_ids + output_shape[1]);
 
     // Convert output IDs to phonemes
     std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector);
