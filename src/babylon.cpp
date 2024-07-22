@@ -154,14 +154,15 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     Ort::AllocatorWithDefaultOptions allocator;
 
     // Convert input text to tensor
+    std::vector<Ort::Value> input_tensors;
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
-    Ort::Value input_tensor = Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size());
+    input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
 
-    const char* input_names[] = {"text"};
-    const char* output_names[] = {"output"};
-    auto output_tensors = ort_session->Run(Ort::RunOptions{nullptr}, input_names, &input_tensor, 1, output_names, 1);
+    std::array<const char *, 1> input_names = {"text"};
+    std::array<const char *, 1> output_names = {"output"};
+    auto output_tensors = ort_session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), 1, output_names.data(), 1);
 
     // Process the output tensor
     int64_t* output_ids = output_tensors.front().GetTensorMutableData<int64_t>();

@@ -8,8 +8,16 @@ project(
     LANGUAGES CXX
 )
 
-set(CMAKE_CXX_STANDARD 11) # Enable C++11
+# Enable C++11 standard
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Set compiler options to support UTF-8 encoding
+if(MSVC)
+    add_compile_options("/utf-8")
+else()
+    add_compile_options("-finput-charset=UTF-8" "-fexec-charset=UTF-8")
+endif()
 
 add_library(
     babylon
