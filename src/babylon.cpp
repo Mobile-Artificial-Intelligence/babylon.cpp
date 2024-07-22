@@ -76,7 +76,7 @@ std::vector<int64_t> SequenceTokenizer::operator()(const std::string& sentence, 
     return sequence;
 }
 
-std::string SequenceTokenizer::decode(const std::vector<int64_t>& sequence, bool remove_special_tokens) const {
+std::vector<std::string> SequenceTokenizer::decode(const std::vector<int64_t>& sequence, bool remove_special_tokens) const {
     std::vector<int64_t> processed_sequence;
     if (append_start_end) {
         processed_sequence.push_back(sequence.front());
@@ -90,12 +90,12 @@ std::string SequenceTokenizer::decode(const std::vector<int64_t>& sequence, bool
         }
     }
 
-    std::string decoded;
+    std::vector<std::string> decoded;
     for (int64_t token : processed_sequence) {
         if (remove_special_tokens && special_tokens.count(idx_to_token.at(token))) {
             continue;
         }
-        decoded += idx_to_token.at(token);
+        decoded.push_back(idx_to_token.at(token));
     }
 
     return decoded;
