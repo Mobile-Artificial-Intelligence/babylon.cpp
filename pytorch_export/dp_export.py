@@ -10,9 +10,11 @@ model, config = load_checkpoint(checkpoint_path)
 
 # Extract vocabulary sizes directly from the model's embedding layers
 if isinstance(model, ForwardTransformer):
+    print("ForwardTransformer model detected")
     encoder_vocab_size = model.embedding.num_embeddings
     decoder_vocab_size = model.fc_out.out_features
 elif isinstance(model, AutoregressiveTransformer):
+    print("AutoregressiveTransformer model detected")
     encoder_vocab_size = model.encoder.num_embeddings
     decoder_vocab_size = model.decoder.num_embeddings
 else:
