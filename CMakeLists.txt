@@ -27,7 +27,7 @@ add_library(
 # Look for onnxruntime files in <root>/lib
 if(NOT DEFINED ONNXRUNTIME_DIR)
     if(NOT DEFINED ONNXRUNTIME_VERSION)
-        set(ONNXRUNTIME_VERSION "1.14.1")
+        set(ONNXRUNTIME_VERSION "1.18.1")
     endif()
 
     if(WIN32)
@@ -78,7 +78,7 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
             file(DOWNLOAD "${ONNXRUNTIME_URL}" "download/${ONNXRUNTIME_FILENAME}")
         endif()
 
-        # Extract .zip or .tgz to a directory like lib/onnxruntime-linux-x64-1.14.1/
+        # Extract .zip or .tgz to a directory like lib/onnxruntime-linux-x64-1.18.1/
         file(ARCHIVE_EXTRACT INPUT "download/${ONNXRUNTIME_FILENAME}" DESTINATION "${CMAKE_CURRENT_LIST_DIR}/lib")
     endif()
 endif()
