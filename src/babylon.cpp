@@ -111,7 +111,7 @@ std::string SequenceTokenizer::make_start_token(const std::string& language) con
 }
 
 Babylon::Babylon(const std::string& model_path) {
-    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Babylon");
+    Ort::Env env(ORT_LOGGING_LEVEL_FATAL, "Babylon");
     Ort::SessionOptions session_options;
     session_options.SetIntraOpNumThreads(1);
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
