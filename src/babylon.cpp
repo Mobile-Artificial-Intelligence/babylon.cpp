@@ -103,6 +103,10 @@ std::vector<std::string> SequenceTokenizer::decode(const std::vector<int64_t>& s
         }
     }
 
+    // Remove consecutive duplicate tokens
+    auto last = std::unique(processed_sequence.begin(), processed_sequence.end());
+    processed_sequence.erase(last, processed_sequence.end());
+
     std::vector<std::string> decoded;
     for (int64_t token : processed_sequence) {
         if (token == end_index) {
