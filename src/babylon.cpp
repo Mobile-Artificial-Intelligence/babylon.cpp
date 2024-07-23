@@ -2,6 +2,7 @@
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 LanguageTokenizer::LanguageTokenizer(const std::vector<std::string>& languages) {
     for (size_t i = 0; i < languages.size(); ++i) {
@@ -125,6 +126,23 @@ std::string SequenceTokenizer::make_start_token(const std::string& language) con
     return "<" + language + ">";
 }
 
+std::vector<float> softmax(const std::vector<float>& logits) {
+    std::vector<float> probabilities(logits.size());
+    float max_logit = *std::max_element(logits.begin(), logits.end());
+    float sum = 0.0;
+
+    for (size_t i = 0; i < logits.size(); ++i) {
+        probabilities[i] = std::exp(logits[i] - max_logit);
+        sum += probabilities[i];
+    }
+
+    for (size_t i = 0; i < logits.size(); ++i) {
+        probabilities[i] /= sum;
+    }
+
+    return probabilities;
+}
+
 Babylon::Babylon(const std::string& model_path) {
     Ort::Env env(ORT_LOGGING_LEVEL_FATAL, "Babylon");
     Ort::SessionOptions session_options;
@@ -172,13 +190,6 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     std::vector<Ort::Value> input_tensors;
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
 
-    // Print input_ids
-    std::cout << "Input IDs: ";
-    for (auto id : input_ids) {
-        std::cout << id << " ";
-    }
-    std::cout << std::endl;
-
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
@@ -205,28 +216,15 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     // Decode the output: find the index with the highest probability at each position
     std::vector<int64_t> output_ids_vector(output_shape[1]);
     for (size_t i = 0; i < output_shape[1]; ++i) {
-        float max_prob = output_data[i * output_shape[2]];
-        int64_t max_index = 0;
-        for (size_t j = 1; j < output_shape[2]; ++j) {
-            float prob = output_data[i * output_shape[2] + j];
-            if (prob > max_prob) {
-                max_prob = prob;
-                max_index = j;
-            }
-        }
-        output_ids_vector[i] = max_index;
+        std::vector<float> logits(output_data + i * output_shape[2], output_data + (i + 1) * output_shape[2]);
+        std::vector<float> probabilities = softmax(logits);
+        
+        auto max_prob_iter = std::max_element(probabilities.begin(), probabilities.end());
+        output_ids_vector[i] = std::distance(probabilities.begin(), max_prob_iter);
     }
-
-    // Print output_ids_vector
-    std::cout << "Output IDs: ";
-    for (auto id : output_ids_vector) {
-        std::cout << id << " ";
-    }
-    std::cout << std::endl;
 
     // Convert output IDs to phonemes
     std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector, true);
 
     return phonemes;
 }
-
