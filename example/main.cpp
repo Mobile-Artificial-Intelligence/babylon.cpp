@@ -3,7 +3,7 @@
 
 int main() {
     Babylon babylon("./models/deep_phonemizer.onnx");
-    std::string text = "hello world";
+    std::string text = "hello";
     std::string language = "en_us";
 
     std::vector<std::string> phonemes = babylon.GraphemeToPhoneme(text, language);

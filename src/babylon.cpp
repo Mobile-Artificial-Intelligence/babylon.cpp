@@ -149,7 +149,7 @@ Babylon::Babylon(const std::string& model_path) {
         "ʁ", "ʃ", "ʊ", "ʌ", "ʏ", "ʒ", "ʔ", "ˈ", "ˌ", "ː", "̃", "̍", "̥", "̩", 
         "̯", "͡", "θ"
     };
-    int char_repeats = 1;
+    int char_repeats = 3;
     bool lowercase = true;
 
     lang_tokenizer = new LanguageTokenizer(languages);
