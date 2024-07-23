@@ -83,16 +83,22 @@ std::vector<int64_t> SequenceTokenizer::operator()(const std::string& sentence, 
 }
 
 std::vector<std::string> SequenceTokenizer::decode(const std::vector<int64_t>& sequence, bool remove_special_tokens) const {
+    std::vector<int64_t> pruned_sequence = sequence;
+    pruned_sequence.erase(
+        std::remove(pruned_sequence.begin(), pruned_sequence.end(), pad_index),
+        pruned_sequence.end()
+    );
+
     std::vector<int64_t> processed_sequence;
     if (append_start_end) {
-        processed_sequence.push_back(sequence.front());
-        for (size_t i = 1; i < sequence.size() - 1; i += char_repeats) {
-            processed_sequence.push_back(sequence[i]);
+        processed_sequence.push_back(pruned_sequence.front());
+        for (size_t i = 1; i < pruned_sequence.size() - 1; i += char_repeats) {
+            processed_sequence.push_back(pruned_sequence[i]);
         }
-        processed_sequence.push_back(sequence.back());
+        processed_sequence.push_back(pruned_sequence.back());
     } else {
-        for (size_t i = 0; i < sequence.size(); i += char_repeats) {
-            processed_sequence.push_back(sequence[i]);
+        for (size_t i = 0; i < pruned_sequence.size(); i += char_repeats) {
+            processed_sequence.push_back(pruned_sequence[i]);
         }
     }
 
@@ -191,13 +197,6 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     const float* output_data = output_tensors.front().GetTensorData<float>();
     std::vector<int64_t> output_shape = output_tensors.front().GetTensorTypeAndShapeInfo().GetShape();
 
-    // Print output shape
-    std::cout << "Output shape: ";
-    for (int64_t dim : output_shape) {
-        std::cout << dim << " ";
-    }
-    std::cout << std::endl;
-
     // Ensure the output shape is as expected: {1, 50, 53}
     if (output_shape.size() != 3 || output_shape[0] != 1 || output_shape[1] != 50 || output_shape[2] != 53) {
         throw std::runtime_error("Unexpected output shape from the model.");
@@ -226,7 +225,7 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     std::cout << std::endl;
 
     // Convert output IDs to phonemes
-    std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector);
+    std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector, true);
 
     return phonemes;
 }
