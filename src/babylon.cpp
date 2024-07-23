@@ -166,23 +166,64 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     std::vector<Ort::Value> input_tensors;
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
 
-    // Ensure the input shape matches the model's expected shape
-    // Based on the dynamic dimensions, you may need to adjust the input size
+    // Print input_ids
+    std::cout << "Input IDs: ";
+    for (auto id : input_ids) {
+        std::cout << id << " ";
+    }
+    std::cout << std::endl;
+
     std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
-    // Ensure the input tensor matches the expected shape
     input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
 
     std::array<const char *, 1> input_names = {"text"};
     std::array<const char *, 1> output_names = {"output"};
     auto output_tensors = ort_session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), 1, output_names.data(), 1);
 
+    // Check if output tensor is valid
+    if (output_tensors.empty()) {
+        throw std::runtime_error("No output tensor returned from the model.");
+    }
+
     // Process the output tensor
-    int64_t* output_ids = output_tensors.front().GetTensorMutableData<int64_t>();
+    const float* output_data = output_tensors.front().GetTensorData<float>();
     std::vector<int64_t> output_shape = output_tensors.front().GetTensorTypeAndShapeInfo().GetShape();
 
-    std::vector<int64_t> output_ids_vector(output_ids, output_ids + output_shape[1]);
+    // Print output shape
+    std::cout << "Output shape: ";
+    for (int64_t dim : output_shape) {
+        std::cout << dim << " ";
+    }
+    std::cout << std::endl;
+
+    // Ensure the output shape is as expected: {1, 50, 53}
+    if (output_shape.size() != 3 || output_shape[0] != 1 || output_shape[1] != 50 || output_shape[2] != 53) {
+        throw std::runtime_error("Unexpected output shape from the model.");
+    }
+
+    // Decode the output: find the index with the highest probability at each position
+    std::vector<int64_t> output_ids_vector(output_shape[1]);
+    for (size_t i = 0; i < output_shape[1]; ++i) {
+        float max_prob = output_data[i * output_shape[2]];
+        int64_t max_index = 0;
+        for (size_t j = 1; j < output_shape[2]; ++j) {
+            float prob = output_data[i * output_shape[2] + j];
+            if (prob > max_prob) {
+                max_prob = prob;
+                max_index = j;
+            }
+        }
+        output_ids_vector[i] = max_index;
+    }
+
+    // Print output_ids_vector
+    std::cout << "Output IDs: ";
+    for (auto id : output_ids_vector) {
+        std::cout << id << " ";
+    }
+    std::cout << std::endl;
 
     // Convert output IDs to phonemes
     std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector);
