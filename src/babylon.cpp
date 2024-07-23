@@ -157,20 +157,9 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
     std::vector<Ort::Value> input_tensors;
     std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
 
-    // Determine the required shape based on model's expected input
-    const int64_t required_size = 50 * 4 * 128;  // This needs to be adjusted according to model's requirement
-
-    // Adjust the input_ids to match the required size
-    if (input_ids.size() < required_size) {
-        // Pad with zeros if the input size is less than required
-        input_ids.resize(required_size, 0);
-    } else if (input_ids.size() > required_size) {
-        // Truncate if the input size is more than required
-        input_ids.resize(required_size);
-    }
-
-    // Adjust the input shape to have rank 2
-    std::vector<int64_t> input_shape = {1, required_size};  // Using batch size 1 for simplicity
+    // Ensure the input shape matches the model's expected shape
+    // Based on the dynamic dimensions, you may need to adjust the input size
+    std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
     // Ensure the input tensor matches the expected shape
@@ -191,3 +180,4 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
 
     return phonemes;
 }
+
