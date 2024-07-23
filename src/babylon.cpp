@@ -156,13 +156,12 @@ Babylon::Babylon(const std::string& model_path) {
 }
 
 Babylon::~Babylon() {
-    delete (Ort::Session*)session;
+    delete session;
     delete text_tokenizer;
     delete phoneme_tokenizer;
 }
 
 std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, const std::string& language) {
-    Ort::Session* ort_session = (Ort::Session*)session;
     Ort::AllocatorWithDefaultOptions allocator;
 
     // Convert input text to tensor
@@ -176,7 +175,7 @@ std::vector<std::string> Babylon::GraphemeToPhoneme(const std::string& text, con
 
     std::array<const char *, 1> input_names = {"text"};
     std::array<const char *, 1> output_names = {"output"};
-    auto output_tensors = ort_session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), 1, output_names.data(), 1);
+    auto output_tensors = session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), 1, output_names.data(), 1);
 
     // Check if output tensor is valid
     if (output_tensors.empty()) {

@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <onnxruntime_cxx_api.h>
 
 class SequenceTokenizer {
 public:
@@ -36,7 +37,7 @@ public:
     std::vector<std::string> GraphemeToPhoneme(const std::string& text, const std::string& language);
 
 private:
-    void* session; // Placeholder for ONNX Runtime session
+    Ort::Session* session;
     SequenceTokenizer* text_tokenizer;
     SequenceTokenizer* phoneme_tokenizer;
 };
