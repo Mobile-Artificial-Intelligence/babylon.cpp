@@ -73,6 +73,12 @@ std::vector<int64_t> SequenceTokenizer::operator()(const std::string& sentence, 
         sequence.push_back(end_index);
     }
 
+    // Pad the sequence to the maximum length (50)
+    int max_length = 50;
+    while (sequence.size() < max_length) {
+        sequence.push_back(pad_index);
+    }
+
     return sequence;
 }
 
@@ -92,6 +98,9 @@ std::vector<std::string> SequenceTokenizer::decode(const std::vector<int64_t>& s
 
     std::vector<std::string> decoded;
     for (int64_t token : processed_sequence) {
+        if (token == end_index) {
+            break;
+        }
         if (remove_special_tokens && special_tokens.count(idx_to_token.at(token))) {
             continue;
         }
