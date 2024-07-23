@@ -6,17 +6,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-class LanguageTokenizer {
-public:
-    LanguageTokenizer(const std::vector<std::string>& languages);
-    int operator()(const std::string& lang) const;
-    std::string decode(int index) const;
-
-private:
-    std::unordered_map<std::string, int> lang_index;
-    std::unordered_map<int, std::string> index_lang;
-};
-
 class SequenceTokenizer {
 public:
     SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
@@ -48,7 +37,6 @@ public:
 
 private:
     void* session; // Placeholder for ONNX Runtime session
-    LanguageTokenizer* lang_tokenizer;
     SequenceTokenizer* text_tokenizer;
     SequenceTokenizer* phoneme_tokenizer;
 };

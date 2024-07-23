@@ -4,29 +4,6 @@
 #include <algorithm>
 #include <cmath>
 
-LanguageTokenizer::LanguageTokenizer(const std::vector<std::string>& languages) {
-    for (size_t i = 0; i < languages.size(); ++i) {
-        lang_index[languages[i]] = i;
-        index_lang[i] = languages[i];
-    }
-}
-
-int LanguageTokenizer::operator()(const std::string& lang) const {
-    auto it = lang_index.find(lang);
-    if (it == lang_index.end()) {
-        throw std::invalid_argument("Language not supported: " + lang);
-    }
-    return it->second;
-}
-
-std::string LanguageTokenizer::decode(int index) const {
-    auto it = index_lang.find(index);
-    if (it == index_lang.end()) {
-        throw std::invalid_argument("Index not supported: " + std::to_string(index));
-    }
-    return it->second;
-}
-
 SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase, bool append_start_end)
     : char_repeats(char_repeats), lowercase(lowercase), append_start_end(append_start_end), pad_token("_"), end_token("<end>") {
     
@@ -174,14 +151,12 @@ Babylon::Babylon(const std::string& model_path) {
     int char_repeats = 3;
     bool lowercase = true;
 
-    lang_tokenizer = new LanguageTokenizer(languages);
     text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
     phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
 }
 
 Babylon::~Babylon() {
     delete (Ort::Session*)session;
-    delete lang_tokenizer;
     delete text_tokenizer;
     delete phoneme_tokenizer;
 }
