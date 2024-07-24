@@ -47,4 +47,17 @@ namespace DeepPhonemizer {
   };
 }
 
+namespace VITS {
+  class Session {
+    public:
+      Session(const std::string& model_path);
+      ~Session();
+
+      //void tts(const std::string& text);
+
+    private:
+      Ort::Session* session;
+  };
+}
+
 #endif // BABYLON_HPP

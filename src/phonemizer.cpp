@@ -127,17 +127,19 @@ namespace DeepPhonemizer {
     }
 
     Session::Session(const std::string& model_path, const std::string language) {
-        Ort::Env env(ORT_LOGGING_LEVEL_FATAL, "Session");
+        Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "DeepPhonemizer");
+        env.DisableTelemetryEvents();
+
         Ort::SessionOptions session_options;
         session_options.SetIntraOpNumThreads(1);
         session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
         session = new Ort::Session(env, model_path.c_str(), session_options);
 
+        // Load metadata from the model
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
         Ort::AllocatorWithDefaultOptions allocator;
 
-        // Dynamic configuration
         Ort::AllocatedStringPtr langs_ptr = model_metadata.LookupCustomMetadataMapAllocated("languages", allocator);
 
         std::vector<std::string> languages;
