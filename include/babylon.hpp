@@ -7,39 +7,42 @@
 #include <unordered_set>
 #include <onnxruntime_cxx_api.h>
 
-class SequenceTokenizer {
-public:
-    SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
-    std::vector<int64_t> operator()(const std::string& sentence, const std::string& language) const;
-    std::vector<std::string> decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
+namespace DeepPhonemizer {
+    class SequenceTokenizer {
+      public:
+        SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
+        std::vector<int64_t> operator()(const std::string& sentence, const std::string& language) const;
+        std::vector<std::string> decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
+    
+      private:
+        std::unordered_map<std::string, int> token_to_idx;
+        std::unordered_map<int, std::string> idx_to_token;
+        int char_repeats;
+        bool lowercase;
+        bool append_start_end;
+        int pad_index;
+        int end_index;
+        std::string pad_token;
+        std::string end_token;
+        std::unordered_set<std::string> special_tokens;
+    
+        int get_start_index(const std::string& language) const;
+        std::string make_start_token(const std::string& language) const;
+    };
 
-private:
-    std::unordered_map<std::string, int> token_to_idx;
-    std::unordered_map<int, std::string> idx_to_token;
-    int char_repeats;
-    bool lowercase;
-    bool append_start_end;
-    int pad_index;
-    int end_index;
-    std::string pad_token;
-    std::string end_token;
-    std::unordered_set<std::string> special_tokens;
+    class Session {
+      public:
+        Session(const std::string& model_path);
+        ~Session();
 
-    int get_start_index(const std::string& language) const;
-    std::string make_start_token(const std::string& language) const;
-};
+        std::vector<std::string> g2p(const std::string& text, const std::string& language);
 
-class Babylon {
-public:
-    Babylon(const std::string& model_path);
-    ~Babylon();
+      private:
+        Ort::Session* session;
+        SequenceTokenizer* text_tokenizer;
+        SequenceTokenizer* phoneme_tokenizer;
+    };
 
-    std::vector<std::string> GraphemeToPhoneme(const std::string& text, const std::string& language);
-
-private:
-    Ort::Session* session;
-    SequenceTokenizer* text_tokenizer;
-    SequenceTokenizer* phoneme_tokenizer;
-};
+}
 
 #endif // BABYLON_HPP

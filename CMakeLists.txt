@@ -25,7 +25,7 @@ endif()
 add_library(
     babylon
     SHARED
-    src/babylon.cpp
+    src/phonemizer.cpp
 )
 
 # Set the output directory for the shared library
