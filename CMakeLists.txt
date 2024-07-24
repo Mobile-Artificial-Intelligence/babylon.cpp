@@ -90,13 +90,21 @@ target_include_directories(
     ${ONNXRUNTIME_DIR}/include
 )
 
-# Link against the appropriate ONNX Runtime library
+add_library(onnxruntime SHARED IMPORTED)
+
+# Import options for onnxruntime
 if(WIN32)
-    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/onnxruntime.lib)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/onnxruntime.dll)
 elseif(APPLE)
-    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
 else()
-    target_link_libraries(babylon ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
 endif()
+
+# Link onnxruntime to babylon
+target_link_libraries(
+    babylon
+    onnxruntime
+)
 
 add_subdirectory(example)
