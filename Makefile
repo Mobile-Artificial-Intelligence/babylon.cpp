@@ -23,5 +23,6 @@ clean:
 	@$(RM) -r $(BUILD_DIR)
 	@$(RM) -r $(BIN_DIR)
 	@$(RM) -r $(CURDIR)/lib
+	@$(RM) -r $(CURDIR)/download
 
 .PHONY: all release debug clean

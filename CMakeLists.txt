@@ -8,6 +8,8 @@ project(
     LANGUAGES CXX
 )
 
+set(BABYLON_LIB_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/lib CACHE PATH "Babylon library install directory")
+
 # Enable C++11 standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -19,10 +21,18 @@ else()
     add_compile_options("-finput-charset=UTF-8" "-fexec-charset=UTF-8")
 endif()
 
+# Add the babylon library
 add_library(
     babylon
     SHARED
     src/babylon.cpp
+)
+
+# Set the output directory for the shared library
+set_target_properties(
+    babylon
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${BABYLON_LIB_INSTALL_DIR}
 )
 
 # Look for onnxruntime files in <root>/lib
@@ -69,18 +79,20 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
         set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
     endif()
 
-    set(ONNXRUNTIME_FILENAME "${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
-    set(ONNXRUNTIME_DIR "${CMAKE_CURRENT_LIST_DIR}/lib/${ONNXRUNTIME_PREFIX}")
+    set(DOWNLOAD_DIR "${CMAKE_CURRENT_LIST_DIR}/download")
+
+    set(ONNXRUNTIME_FILENAME "${DOWNLOAD_DIR}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
+    set(ONNXRUNTIME_DIR "${DOWNLOAD_DIR}/${ONNXRUNTIME_PREFIX}")
 
     if(NOT EXISTS "${ONNXRUNTIME_DIR}")
-        if(NOT EXISTS "download/${ONNXRUNTIME_FILENAME}")
+        if(NOT EXISTS "${ONNXRUNTIME_FILENAME}")
             # Download onnxruntime release
             message("Downloading ${ONNXRUNTIME_URL}")
-            file(DOWNLOAD "${ONNXRUNTIME_URL}" "download/${ONNXRUNTIME_FILENAME}")
+            file(DOWNLOAD "${ONNXRUNTIME_URL}" "${ONNXRUNTIME_FILENAME}")
         endif()
 
         # Extract .zip or .tgz to a directory like lib/onnxruntime-linux-x64-1.18.1/
-        file(ARCHIVE_EXTRACT INPUT "download/${ONNXRUNTIME_FILENAME}" DESTINATION "${CMAKE_CURRENT_LIST_DIR}/lib")
+        file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_FILENAME}" DESTINATION "${DOWNLOAD_DIR}")
     endif()
 endif()
 
@@ -91,32 +103,25 @@ target_include_directories(
     ${ONNXRUNTIME_DIR}/include
 )
 
+# Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
+file(
+    COPY ${ONNXRUNTIME_DIR}/lib/
+    DESTINATION ${BABYLON_LIB_INSTALL_DIR}
+)
+
 add_library(onnxruntime SHARED IMPORTED)
 
 # Import options for onnxruntime
 if(WIN32)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/onnxruntime.dll)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
 elseif(APPLE)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
 else()
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.so)
 endif()
 
 # Link onnxruntime to babylon
 target_link_libraries(
     babylon
     onnxruntime
-)
-
-# Set the output directory for the shared library
-set_target_properties(
-    babylon
-    PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/install
-)
-
-# Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
-file(
-    COPY ${ONNXRUNTIME_DIR}/lib/
-    DESTINATION ${CMAKE_CURRENT_LIST_DIR}/install
 )
