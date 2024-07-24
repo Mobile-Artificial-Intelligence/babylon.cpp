@@ -114,3 +114,9 @@ set_target_properties(
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/install
 )
+
+# Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
+file(
+    COPY ${ONNXRUNTIME_DIR}/lib/
+    DESTINATION ${CMAKE_CURRENT_LIST_DIR}/install
+)
