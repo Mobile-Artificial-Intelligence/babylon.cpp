@@ -125,3 +125,5 @@ target_link_libraries(
     babylon
     onnxruntime
 )
+
+add_subdirectory(example)
