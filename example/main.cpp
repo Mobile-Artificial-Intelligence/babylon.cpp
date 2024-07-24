@@ -3,7 +3,7 @@
 
 int main() {
     DeepPhonemizer::Session session("./models/deep_phonemizer.onnx");
-    std::string text = "hello";
+    std::string text = "Hello world. My name is John Doe.";
     std::string language = "en_us";
 
     std::vector<std::string> phonemes = session.g2p(text);

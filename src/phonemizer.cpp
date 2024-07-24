@@ -1,6 +1,7 @@
 #include "babylon.hpp"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <cmath>
 
@@ -168,6 +169,27 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p(const std::string& text) {
+        // Split sentence into words
+        std::vector<std::string> words;
+        
+        std::stringstream ss(text);
+        std::string word;
+        while (ss >> word) {
+            words.push_back(word);
+        }
+
+        // Convert each word to phonemes
+        std::vector<std::string> phonemes;
+        for (const auto& word : words) {
+            std::vector<std::string> word_phonemes = g2p_internal(word);
+            phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
+            phonemes.push_back(" ");
+        }
+
+        return phonemes;
+    }
+
+    std::vector<std::string> Session::g2p_internal(const std::string& text) {
         Ort::AllocatorWithDefaultOptions allocator;
 
         // Convert input text to tensor
