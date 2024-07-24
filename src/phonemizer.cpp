@@ -134,6 +134,43 @@ namespace DeepPhonemizer {
 
         session = new Ort::Session(env, model_path.c_str(), session_options);
 
+        /*
+        Ort::ModelMetadata model_metadata = session->GetModelMetadata();
+        Ort::AllocatorWithDefaultOptions allocator;
+
+        // Dynamic configuration
+        Ort::AllocatedStringPtr langs_ptr = model_metadata.LookupCustomMetadataMapAllocated("languages", allocator);
+
+        std::vector<std::string> languages;
+        std::stringstream languages_stream(langs_ptr.get());
+        std::string language_buffer;
+        while (languages_stream >> language_buffer) {
+            languages.push_back(language_buffer);
+        }
+
+        Ort::AllocatedStringPtr text_symbols_ptr = model_metadata.LookupCustomMetadataMapAllocated("text_symbols", allocator);
+
+        std::vector<std::string> text_symbols;
+        std::stringstream text_symbols_stream(text_symbols_ptr.get());
+        std::string text_symbol_buffer;
+        while (text_symbols_stream >> text_symbol_buffer) {
+            text_symbols.push_back(text_symbol_buffer);
+        }
+
+        Ort::AllocatedStringPtr phoneme_symbols_ptr = model_metadata.LookupCustomMetadataMapAllocated("phoneme_symbols", allocator);
+
+        std::vector<std::string> phoneme_symbols;
+        std::stringstream phoneme_symbols_stream(phoneme_symbols_ptr.get());
+        std::string phoneme_symbol_buffer;
+        while (phoneme_symbols_stream >> phoneme_symbol_buffer) {
+            phoneme_symbols.push_back(phoneme_symbol_buffer);
+        }
+
+        int char_repeats = model_metadata.LookupCustomMetadataMapAllocated("char_repeats", allocator).get()[0] - '0';
+
+        bool lowercase = model_metadata.LookupCustomMetadataMapAllocated("lowercase", allocator).get()[0] == '1';
+        */
+
         // Static configuration
         std::vector<std::string> languages = {"de", "en_us"};
         std::vector<std::string> text_symbols = {
@@ -190,8 +227,6 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
-        Ort::AllocatorWithDefaultOptions allocator;
-
         // Convert input text to tensor
         std::vector<Ort::Value> input_tensors;
         std::vector<int64_t> input_ids = text_tokenizer->operator()(text, lang);
