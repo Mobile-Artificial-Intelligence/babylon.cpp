@@ -21,6 +21,7 @@ endif()
 
 add_library(
     babylon
+    SHARED
     src/babylon.cpp
 )
 
@@ -107,4 +108,9 @@ target_link_libraries(
     onnxruntime
 )
 
-add_subdirectory(example)
+# Set the output directory for the shared library
+set_target_properties(
+    babylon
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/install
+)
