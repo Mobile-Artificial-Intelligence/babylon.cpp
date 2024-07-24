@@ -134,7 +134,6 @@ namespace DeepPhonemizer {
 
         session = new Ort::Session(env, model_path.c_str(), session_options);
 
-        /*
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
         Ort::AllocatorWithDefaultOptions allocator;
 
@@ -169,26 +168,6 @@ namespace DeepPhonemizer {
         int char_repeats = model_metadata.LookupCustomMetadataMapAllocated("char_repeats", allocator).get()[0] - '0';
 
         bool lowercase = model_metadata.LookupCustomMetadataMapAllocated("lowercase", allocator).get()[0] == '1';
-        */
-
-        // Static configuration
-        std::vector<std::string> languages = {"de", "en_us"};
-        std::vector<std::string> text_symbols = {
-            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
-            "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-            "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß"
-        };
-        std::vector<std::string> phoneme_symbols = {
-            "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", 
-            "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z", "æ", "ç", 
-            "ð", "ø", "ŋ", "œ", "ɐ", "ɑ", "ɔ", "ə", "ɛ", "ɝ", "ɹ", "ɡ", "ɪ", 
-            "ʁ", "ʃ", "ʊ", "ʌ", "ʏ", "ʒ", "ʔ", "ˈ", "ˌ", "ː", "̃", "̍", "̥", "̩", 
-            "̯", "͡", "θ"
-        };
-        int char_repeats = 3;
-        bool lowercase = true;
 
         if (std::find(languages.begin(), languages.end(), language) == languages.end()) {
             throw std::runtime_error("Language not supported.");

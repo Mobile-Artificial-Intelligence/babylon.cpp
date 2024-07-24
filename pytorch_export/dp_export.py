@@ -71,5 +71,21 @@ torch.onnx.export(
 
 # Verify the ONNX model
 onnx_model = onnx.load(onnx_file_path)
+
+# Add metadata to the ONNX model
+metadata = {
+    "languages": "de en_us",
+    "text_symbols": "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ä ö ü Ä Ö Ü ß",
+    "phoneme_symbols": "a b d e f g h i j k l m n o p r s t u v w x y z æ ç ð ø ŋ œ ɐ ɑ ɔ ə ɛ ɝ ɹ ɡ ɪ ʁ ʃ ʊ ʌ ʏ ʒ ʔ ˈ ˌ ː ̃ ̍ ̥ ̩ ̯ ͡ θ",
+    "char_repeats": "3" if isinstance(model, ForwardTransformer) else "1",
+    "lowercase": "1"
+}
+
+for key, value in metadata.items():
+    meta = onnx_model.metadata_props.add()
+    meta.key = key
+    meta.value = str(value)
+
+onnx.save(onnx_model, onnx_file_path)
 onnx.checker.check_model(onnx_model)
-print(f"Model successfully converted to {onnx_file_path} with fixed input shape")
+print(f"Model successfully converted to {onnx_file_path} with fixed input shape and metadata added")
