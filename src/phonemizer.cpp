@@ -125,7 +125,7 @@ namespace DeepPhonemizer {
         return probabilities;
     }
 
-    Session::Session(const std::string& model_path) {
+    Session::Session(const std::string& model_path, const std::string language) {
         Ort::Env env(ORT_LOGGING_LEVEL_FATAL, "Session");
         Ort::SessionOptions session_options;
         session_options.SetIntraOpNumThreads(1);
@@ -152,6 +152,11 @@ namespace DeepPhonemizer {
         int char_repeats = 3;
         bool lowercase = true;
 
+        if (std::find(languages.begin(), languages.end(), language) == languages.end()) {
+            throw std::runtime_error("Language not supported.");
+        }
+
+        lang = language;
         text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
         phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
     }
@@ -162,12 +167,12 @@ namespace DeepPhonemizer {
         delete phoneme_tokenizer;
     }
 
-    std::vector<std::string> Session::g2p(const std::string& text, const std::string& language) {
+    std::vector<std::string> Session::g2p(const std::string& text) {
         Ort::AllocatorWithDefaultOptions allocator;
 
         // Convert input text to tensor
         std::vector<Ort::Value> input_tensors;
-        std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
+        std::vector<int64_t> input_ids = text_tokenizer->operator()(text, lang);
 
         std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
         Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
@@ -207,5 +212,4 @@ namespace DeepPhonemizer {
 
         return phonemes;
     }
-
 }

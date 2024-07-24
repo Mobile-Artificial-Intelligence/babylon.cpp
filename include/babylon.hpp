@@ -32,17 +32,17 @@ namespace DeepPhonemizer {
 
     class Session {
       public:
-        Session(const std::string& model_path);
+        Session(const std::string& model_path, const std::string language = "en_us");
         ~Session();
 
-        std::vector<std::string> g2p(const std::string& text, const std::string& language);
+        std::vector<std::string> g2p(const std::string& text);
 
       private:
+        std::string lang;
         Ort::Session* session;
         SequenceTokenizer* text_tokenizer;
         SequenceTokenizer* phoneme_tokenizer;
     };
-
 }
 
 #endif // BABYLON_HPP

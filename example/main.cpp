@@ -6,7 +6,7 @@ int main() {
     std::string text = "hello";
     std::string language = "en_us";
 
-    std::vector<std::string> phonemes = session.g2p(text, language);
+    std::vector<std::string> phonemes = session.g2p(text);
 
     for (const auto& phoneme : phonemes) {
         std::cout << phoneme << " ";
