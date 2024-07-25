@@ -51,15 +51,18 @@ namespace DeepPhonemizer {
   };
 }
 
-namespace VITS {
+namespace Vits {
   class Session {
     public:
       Session(const std::string& model_path);
       ~Session();
 
-      //void tts(const std::string& text);
+      //void tts(const std::vector<std::string> phonemes);
 
     private:
+      const std::array<const char *, 4> input_names = {"input", "input_lengths", "scales", "sid"};
+      const std::array<const char *, 1> output_names = {"output"};
+
       Ort::Session* session;
   };
 }
