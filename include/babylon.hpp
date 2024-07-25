@@ -58,7 +58,7 @@ namespace Vits {
       std::vector<int64_t> operator()(const std::vector<std::string>& phonemes) const;
 
     private:
-      std::unordered_map<std::string, int> token_to_idx;
+      std::unordered_map<char32_t, int> token_to_idx;
   };
 
   class Session {

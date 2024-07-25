@@ -1,10 +1,12 @@
 #include "babylon.hpp"
+#include "external/uni_algo.h"
 #include <onnxruntime_cxx_api.h>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 
 namespace Vits {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids) {
@@ -13,13 +15,20 @@ namespace Vits {
         }
 
         for (int i = 0; i < phonemes.size(); i++) {
-            token_to_idx[phonemes[i]] = phoneme_ids[i];
+            token_to_idx[phonemes[i][0]] = phoneme_ids[i];
         }
     }
 
     std::vector<int64_t> SequenceTokenizer::operator()(const std::vector<std::string>& phonemes) const {
+        // Combine phonemes into a single string
+        std::string phonemes_str = std::accumulate(phonemes.begin(), phonemes.end(), std::string(""));
+
+        auto phonemes_normalized = una::norm::to_nfd_utf8(phonemes_str);
+        auto phonemes_range = una::ranges::utf8_view(phonemes_normalized);
+        
         std::vector<int64_t> phoneme_ids;
-        for (const auto& phoneme : phonemes) {
+
+        for (const auto& phoneme : phonemes_range) {
             try {
                 phoneme_ids.push_back(token_to_idx.at(phoneme));
             } 
