@@ -22,7 +22,8 @@ namespace Vits {
         for (const auto& phoneme : phonemes) {
             try {
                 phoneme_ids.push_back(token_to_idx.at(phoneme));
-            } catch (const std::out_of_range&) {
+            } 
+            catch (const std::out_of_range&) {
                 std::cerr << "Token not found: " << phoneme << std::endl;
                 //throw;
             }
