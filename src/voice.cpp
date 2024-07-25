@@ -123,16 +123,6 @@ namespace Vits {
             scales_shape.size()
         ));
 
-        std::vector<int64_t> sid = {0};
-        std::vector<int64_t> sid_shape = {(int64_t) sid.size()};
-        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
-            memory_info, 
-            sid.data(), 
-            sid.size(),
-            sid_shape.data(), 
-            sid_shape.size()
-        ));
-
         std::vector<Ort::Value> output_tensors = session->Run(
             Ort::RunOptions{nullptr}, 
             input_names.data(), 

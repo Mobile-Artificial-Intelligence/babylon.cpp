@@ -69,7 +69,7 @@ namespace Vits {
       void tts(const std::vector<std::string>& phonemes, const std::string& output_path);
 
     private:
-      const std::array<const char *, 4> input_names = {"input", "input_lengths", "scales", "sid"};
+      const std::array<const char *, 3> input_names = {"input", "input_lengths", "scales"};
       const std::array<const char *, 1> output_names = {"output"};
 
       int sample_rate;
