@@ -15,5 +15,5 @@ for key, value in metadata.items():
     meta.key = key
     meta.value = str(value)
 
-onnx.save(onnx_model, onnx_file_path)
+onnx.save(onnx_model, "./curie.onnx")
 onnx.checker.check_model(onnx_model)
