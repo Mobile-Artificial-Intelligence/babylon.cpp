@@ -51,7 +51,7 @@ namespace DeepPhonemizer {
   };
 }
 
-namespace Vits {
+namespace VITS {
   class Session {
     public:
       Session(const std::string& model_path);
