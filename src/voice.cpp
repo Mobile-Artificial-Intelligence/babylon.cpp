@@ -20,7 +20,13 @@ namespace Vits {
     std::vector<int64_t> SequenceTokenizer::operator()(const std::vector<std::string>& phonemes) const {
         std::vector<int64_t> phoneme_ids;
         for (const auto& phoneme : phonemes) {
-            phoneme_ids.push_back(token_to_idx.at(phoneme));
+            try {
+                phoneme_ids.push_back(token_to_idx.at(phoneme));
+            } 
+            catch (const std::out_of_range&) {
+                std::cerr << "Token not found: " << phoneme << std::endl;
+                throw;
+            }
         }
 
         return phoneme_ids;
