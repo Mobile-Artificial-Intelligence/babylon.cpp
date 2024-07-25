@@ -202,6 +202,14 @@ namespace DeepPhonemizer {
         for (const auto& word : words) {
             std::vector<std::string> word_phonemes = g2p_internal(word);
             phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
+
+            if (punctuation) {
+                // Check if the word ends with punctuation
+                if (std::ispunct(word.back())) {
+                    phonemes.push_back(std::string(1, word.back()));
+                }
+            }
+
             phonemes.push_back(" ");
         }
 

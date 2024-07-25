@@ -2,8 +2,8 @@
 #include <iostream>
 
 int main() {
-    DeepPhonemizer::Session session("./models/deep_phonemizer.onnx");
-    std::string text = "Hello world. My name is John Doe.";
+    DeepPhonemizer::Session session("./models/deep_phonemizer.onnx", "en_us", true);
+    std::string text = "Hello world, This is an example program for the Babylon project.";
 
     std::vector<std::string> phonemes = session.g2p(text);
 
