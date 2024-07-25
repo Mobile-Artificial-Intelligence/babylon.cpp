@@ -66,7 +66,7 @@ namespace Vits {
       Session(const std::string& model_path);
       ~Session();
 
-      //void tts(const std::vector<std::string> phonemes);
+      void tts(const std::vector<std::string>& phonemes, const std::string& output_path);
 
     private:
       const std::array<const char *, 4> input_names = {"input", "input_lengths", "scales", "sid"};
