@@ -224,9 +224,24 @@ namespace DeepPhonemizer {
         std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
         Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
-        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
+        // Create input tensor
+        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
+            memory_info, 
+            input_ids.data(), 
+            input_ids.size(), 
+            input_shape.data(), 
+            input_shape.size()
+        ));
 
-        std::vector<Ort::Value> output_tensors = session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), input_names.size(), output_names.data(), output_names.size());
+        // Run the model
+        std::vector<Ort::Value> output_tensors = session->Run(
+            Ort::RunOptions{nullptr}, 
+            input_names.data(), 
+            input_tensors.data(), 
+            input_names.size(), 
+            output_names.data(), 
+            output_names.size()
+        );
 
         // Check if output tensor is valid
         if (output_tensors.empty()) {

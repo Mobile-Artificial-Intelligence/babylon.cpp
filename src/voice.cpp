@@ -83,4 +83,63 @@ namespace Vits {
         delete session;
         delete phoneme_tokenizer;
     }
+
+    void Session::tts(const std::vector<std::string>& phonemes, const std::string& output_path) {
+        Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
+
+        std::vector<Ort::Value> input_tensors;
+
+        std::vector<int64_t> phoneme_ids = phoneme_tokenizer->operator()(phonemes);
+        std::vector<int64_t> phoneme_ids_shape = {1, (int64_t) phoneme_ids.size()};
+        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
+            memory_info, 
+            phoneme_ids.data(), 
+            phoneme_ids.size(), 
+            phoneme_ids_shape.data(),
+            phoneme_ids_shape.size()
+        ));
+
+        std::vector<int64_t> phoneme_ids_length = {(int64_t) phoneme_ids.size()};
+        std::vector<int64_t> phoneme_ids_length_shape = {(int64_t) phoneme_ids_length.size()};
+        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
+            memory_info, 
+            phoneme_ids_length.data(), 
+            phoneme_ids_length.size(),
+            phoneme_ids_length_shape.data(), 
+            phoneme_ids_length_shape.size()
+        ));
+
+        std::vector<int64_t> scales_shape = {(int64_t) scales.size()};
+        input_tensors.push_back(Ort::Value::CreateTensor<float>(
+            memory_info, 
+            scales.data(), 
+            scales.size(),
+            scales_shape.data(), 
+            scales_shape.size()
+        ));
+
+        std::vector<int64_t> sid = {0};
+        std::vector<int64_t> sid_shape = {(int64_t) sid.size()};
+        input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
+            memory_info, 
+            sid.data(), 
+            sid.size(),
+            sid_shape.data(), 
+            sid_shape.size()
+        ));
+
+        std::vector<Ort::Value> output_tensors = session->Run(
+            Ort::RunOptions{nullptr}, 
+            input_names.data(), 
+            input_tensors.data(), 
+            input_names.size(), 
+            output_names.data(), 
+            output_names.size()
+        );
+
+        // Check if output tensor is valid
+        if (output_tensors.empty()) {
+            throw std::runtime_error("No output tensor returned from the model.");
+        }
+    }
 }
