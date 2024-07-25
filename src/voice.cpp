@@ -6,6 +6,25 @@
 #include <cmath>
 
 namespace VITS {
+    SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids) {
+        if (phonemes.size() != phoneme_ids.size()) {
+            throw std::invalid_argument("Phonemes and phoneme IDs must have the same length.");
+        }
+
+        for (int i = 0; i < phonemes.size(); i++) {
+            token_to_idx[phonemes[i]] = phoneme_ids[i];
+        }
+    }
+
+    std::vector<int64_t> SequenceTokenizer::operator()(const std::vector<std::string>& phonemes) const {
+        std::vector<int64_t> phoneme_ids;
+        for (const auto& phoneme : phonemes) {
+            phoneme_ids.push_back(token_to_idx.at(phoneme));
+        }
+
+        return phoneme_ids;
+    }
+
     Session::Session(const std::string& model_path) {
         Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "VITS");
         env.DisableTelemetryEvents();
@@ -39,15 +58,18 @@ namespace VITS {
         // Load phoneme IDs
         Ort::AllocatedStringPtr phoneme_id_str = model_metadata.LookupCustomMetadataMapAllocated("phoneme_ids", allocator);
 
-        std::vector<int> phoneme_ids;
+        std::vector<const int> phoneme_ids;
         std::stringstream phoneme_id_stream(phoneme_id_str.get());
         std::string phoneme_id_buffer;
         while (phoneme_id_stream >> phoneme_id_buffer) {
             phoneme_ids.push_back(std::stoi(phoneme_id_buffer));
         }
+
+        phoneme_tokenizer = new SequenceTokenizer(phonemes, phoneme_ids);
     }
 
     Session::~Session() {
         delete session;
+        delete phoneme_tokenizer;
     }
 }
