@@ -68,11 +68,13 @@ namespace Vits {
 
         sample_rate = std::stoi(model_metadata.LookupCustomMetadataMapAllocated("sample_rate", allocator).get());
 
-        noise_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_scale", allocator).get());
+        float noise_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_scale", allocator).get());
 
-        length_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("length_scale", allocator).get());
+        float length_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("length_scale", allocator).get());
 
-        noise_w = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_w", allocator).get());
+        float noise_w = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_w", allocator).get());
+
+        scales = {noise_scale, length_scale, noise_w};
 
         phoneme_tokenizer = new SequenceTokenizer(phonemes, phoneme_ids);
     }

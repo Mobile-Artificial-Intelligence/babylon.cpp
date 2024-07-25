@@ -73,9 +73,7 @@ namespace Vits {
       const std::array<const char *, 1> output_names = {"output"};
 
       int sample_rate;
-      float noise_scale;
-      float length_scale;
-      float noise_w;
+      std::vector<float> scales;
 
       Ort::Session* session;
       SequenceTokenizer* phoneme_tokenizer;
