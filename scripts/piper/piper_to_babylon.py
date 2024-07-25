@@ -18,7 +18,7 @@ data = json.loads(json_data)
 phoneme_id_map = data['phoneme_id_map']
 
 # Create strings for phonemes and phoneme IDs
-phonemes = ' '.join(phoneme_id_map.keys())
+phonemes = ' '.join(phoneme_id_map.keys().replace(' ', '<space>'))
 phoneme_ids = ' '.join(str(num[0]) for num in phoneme_id_map.values())
 
 # Add metadata to the ONNX model
