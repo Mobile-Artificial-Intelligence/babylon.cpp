@@ -1,5 +1,6 @@
 #include "babylon.hpp"
 #include <onnxruntime_cxx_api.h>
+#include <string>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -64,6 +65,12 @@ namespace Vits {
         while (phoneme_id_stream >> phoneme_id_buffer) {
             phoneme_ids.push_back(std::stoi(phoneme_id_buffer));
         }
+
+        noise_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_scale", allocator).get());
+
+        length_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("length_scale", allocator).get());
+        
+        noise_w = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_w", allocator).get());
 
         phoneme_tokenizer = new SequenceTokenizer(phonemes, phoneme_ids);
     }
