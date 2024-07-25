@@ -26,6 +26,7 @@ add_library(
     babylon
     SHARED
     src/phonemizer.cpp
+    src/voice.cpp
 )
 
 # Set the output directory for the shared library

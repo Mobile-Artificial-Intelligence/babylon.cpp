@@ -12,5 +12,9 @@ int main() {
     }
     std::cout << std::endl;
 
+    Vits::Session curie("./models/curie.onnx");
+
+    curie.tts(phonemes, "./output.wav");
+
     return 0;
 }
