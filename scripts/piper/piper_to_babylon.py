@@ -25,9 +25,10 @@ phoneme_ids = ' '.join(str(num[0]) for num in phoneme_id_map.values())
 metadata = {
     "phonemes": phonemes,
     "phoneme_ids": phoneme_ids,
-    "noise_scale": data['noise_scale'],
-    "length_scale": data['length_scale'],
-    "noise_w": data['noise_w'],
+    "sample_rate": data['audio']['sample_rate'],
+    "noise_scale": data['inference']['noise_scale'],
+    "length_scale": data['inference']['length_scale'],
+    "noise_w": data['inference']['noise_w'],
 }
 
 for key, value in metadata.items():

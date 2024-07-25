@@ -72,6 +72,7 @@ namespace Vits {
       const std::array<const char *, 4> input_names = {"input", "input_lengths", "scales", "sid"};
       const std::array<const char *, 1> output_names = {"output"};
 
+      int sample_rate;
       float noise_scale;
       float length_scale;
       float noise_w;
