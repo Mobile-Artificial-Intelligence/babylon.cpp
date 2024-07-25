@@ -52,6 +52,15 @@ namespace DeepPhonemizer {
 }
 
 namespace VITS {
+  class SequenceTokenizer {
+    public:
+      SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids);
+      std::vector<int64_t> operator()(const std::vector<std::string>& phonemes) const;
+
+    private:
+      std::unordered_map<std::string, int> token_to_idx;
+  };
+
   class Session {
     public:
       Session(const std::string& model_path);
@@ -64,6 +73,7 @@ namespace VITS {
       const std::array<const char *, 1> output_names = {"output"};
 
       Ort::Session* session;
+      SequenceTokenizer* phoneme_tokenizer;
   };
 }
 
