@@ -126,7 +126,7 @@ namespace DeepPhonemizer {
         return probabilities;
     }
 
-    Session::Session(const std::string& model_path, const std::string language) {
+    Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation) {
         Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "DeepPhonemizer");
         env.DisableTelemetryEvents();
 
@@ -176,6 +176,7 @@ namespace DeepPhonemizer {
         }
 
         lang = language;
+        punctuation = use_punctuation;
         text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
         phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
     }

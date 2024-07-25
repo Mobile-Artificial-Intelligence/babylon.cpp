@@ -32,7 +32,7 @@ namespace DeepPhonemizer {
 
   class Session {
     public:
-      Session(const std::string& model_path, const std::string language = "en_us");
+      Session(const std::string& model_path, const std::string language = "en_us", const bool use_punctuation = false);
       ~Session();
 
       std::vector<std::string> g2p(const std::string& text);
@@ -42,6 +42,7 @@ namespace DeepPhonemizer {
       const std::array<const char *, 1> output_names = {"output"};
 
       std::string lang;
+      bool punctuation;
       Ort::Session* session;
       SequenceTokenizer* text_tokenizer;
       SequenceTokenizer* phoneme_tokenizer;
