@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace VITS {
+namespace Vits {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids) {
         if (phonemes.size() != phoneme_ids.size()) {
             throw std::invalid_argument("Phonemes and phoneme IDs must have the same length.");
