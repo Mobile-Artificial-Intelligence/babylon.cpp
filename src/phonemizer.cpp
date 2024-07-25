@@ -217,9 +217,7 @@ namespace DeepPhonemizer {
 
         input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
 
-        std::array<const char *, 1> input_names = {"text"};
-        std::array<const char *, 1> output_names = {"output"};
-        auto output_tensors = session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), 1, output_names.data(), 1);
+        std::vector<Ort::Value> output_tensors = session->Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), input_names.size(), output_names.data(), output_names.size());
 
         // Check if output tensor is valid
         if (output_tensors.empty()) {

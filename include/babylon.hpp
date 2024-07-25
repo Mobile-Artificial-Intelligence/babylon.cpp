@@ -38,6 +38,9 @@ namespace DeepPhonemizer {
       std::vector<std::string> g2p(const std::string& text);
 
     private:
+      const std::array<const char *, 1> input_names = {"text"};
+      const std::array<const char *, 1> output_names = {"output"};
+
       std::string lang;
       Ort::Session* session;
       SequenceTokenizer* text_tokenizer;
