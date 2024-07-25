@@ -1,12 +1,36 @@
 #include "babylon.hpp"
 #include <onnxruntime_cxx_api.h>
 #include <string>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <cmath>
 
+struct WavHeader {
+  uint8_t RIFF[4] = {'R', 'I', 'F', 'F'};
+  uint32_t chunk_size;
+  uint8_t WAVE[4] = {'W', 'A', 'V', 'E'};
+
+  // fmt
+  uint8_t fmt[4] = {'f', 'm', 't', ' '};
+  uint32_t fmt_size = 16;       // bytes
+  uint16_t audio_format = 1;    // PCM
+  uint16_t num_channels;        // mono
+  uint32_t sample_rate;         // Hertz
+  uint32_t bytes_per_second;    // sample_rate * sample_width
+  uint16_t block_align = 2;     // 16-bit mono
+  uint16_t bits_per_sample = 16;
+
+  // data
+  uint8_t data[4] = {'d', 'a', 't', 'a'};
+  uint32_t data_size;
+};
+
 namespace Vits {
+    const float FMIN = static_cast<float>(std::numeric_limits<int16_t>::min());
+    const float FMAX = static_cast<float>(std::numeric_limits<int16_t>::max());
+
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids) {
         if (phonemes.size() != phoneme_ids.size()) {
             throw std::invalid_argument("Phonemes and phoneme IDs must have the same length.");
@@ -90,6 +114,17 @@ namespace Vits {
         delete phoneme_tokenizer;
     }
 
+    void write_wav_header(int sampleRate, int sampleWidth, int channels, uint32_t numSamples, std::ostream &audioFile) {
+        WavHeader header;
+        header.data_size = numSamples * sampleWidth * channels;
+        header.chunk_size = header.data_size + sizeof(WavHeader) - 8;
+        header.sample_rate = sampleRate;
+        header.num_channels = channels;
+        header.bytes_per_second = sampleRate * sampleWidth * channels;
+        header.block_align = sampleWidth * channels;
+        audioFile.write(reinterpret_cast<const char *>(&header), sizeof(header));
+    }
+
     void Session::tts(const std::vector<std::string>& phonemes, const std::string& output_path) {
         Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
@@ -137,5 +172,46 @@ namespace Vits {
         if (output_tensors.empty()) {
             throw std::runtime_error("No output tensor returned from the model.");
         }
+
+        const float *output_data = output_tensors.front().GetTensorData<float>();
+        std::vector<int64_t> output_shape = output_tensors.front().GetTensorTypeAndShapeInfo().GetShape();
+        int64_t output_count = output_shape[output_shape.size() - 1];
+
+        // Get max audio value for scaling
+        float max_output_value = 0.01f;
+        for (int64_t i = 0; i < output_count; i++) {
+          float output_value = abs(output_data[i]);
+          if (output_value > max_output_value) {
+            max_output_value = output_value;
+          }
+        }
+
+        std::vector<int16_t> audio_data;
+        audio_data.reserve(output_count);
+
+        // Scale audio to fill range and convert to int16
+        float audio_scale = (32767.0f / std::max(0.01f, max_output_value));
+        for (int64_t i = 0; i < output_count; i++) {
+            float audio_value = output_data[i] * audio_scale;
+            float clamped_audio_value = std::clamp(audio_value, FMIN, FMAX);
+            int16_t int_audio_value = static_cast<int16_t>(clamped_audio_value);
+            audio_data.push_back(int_audio_value);
+        }
+
+        std::ofstream audio_file(output_path, std::ios::binary);
+        
+        int sample_width = 2;
+        int channels = 1;
+
+        WavHeader header;
+        header.data_size = audio_data.size() * sample_width * channels;
+        header.chunk_size = header.data_size + sizeof(WavHeader) - 8;
+        header.sample_rate = sample_rate;
+        header.num_channels = channels;
+        header.bytes_per_second = sample_rate * sample_width * channels;
+        header.block_align = sample_width * channels;
+
+        audio_file.write(reinterpret_cast<const char *>(&header), sizeof(header));
+        audio_file.write((const char *) audio_data.data(), sizeof(int16_t) * audio_data.size());
     }
 }
