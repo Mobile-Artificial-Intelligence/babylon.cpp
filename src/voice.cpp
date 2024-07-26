@@ -114,17 +114,6 @@ namespace Vits {
         delete phoneme_tokenizer;
     }
 
-    void write_wav_header(int sampleRate, int sampleWidth, int channels, uint32_t numSamples, std::ostream &audioFile) {
-        WavHeader header;
-        header.data_size = numSamples * sampleWidth * channels;
-        header.chunk_size = header.data_size + sizeof(WavHeader) - 8;
-        header.sample_rate = sampleRate;
-        header.num_channels = channels;
-        header.bytes_per_second = sampleRate * sampleWidth * channels;
-        header.block_align = sampleWidth * channels;
-        audioFile.write(reinterpret_cast<const char *>(&header), sizeof(header));
-    }
-
     void Session::tts(const std::vector<std::string>& phonemes, const std::string& output_path) {
         Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
