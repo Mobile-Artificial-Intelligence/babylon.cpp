@@ -31,7 +31,7 @@ namespace Vits {
     const float FMIN = static_cast<float>(std::numeric_limits<int16_t>::min());
     const float FMAX = static_cast<float>(std::numeric_limits<int16_t>::max());
 
-    SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids) {
+    SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<int>& phoneme_ids) {
         if (phonemes.size() != phoneme_ids.size()) {
             throw std::invalid_argument("Phonemes and phoneme IDs must have the same length.");
         }
@@ -89,7 +89,7 @@ namespace Vits {
         // Load phoneme IDs
         Ort::AllocatedStringPtr phoneme_id_str = model_metadata.LookupCustomMetadataMapAllocated("phoneme_ids", allocator);
 
-        std::vector<const int> phoneme_ids;
+        std::vector<int> phoneme_ids;
         std::stringstream phoneme_id_stream(phoneme_id_str.get());
         std::string phoneme_id_buffer;
         while (phoneme_id_stream >> phoneme_id_buffer) {

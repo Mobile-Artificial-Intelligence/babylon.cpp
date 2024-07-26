@@ -54,7 +54,7 @@ namespace DeepPhonemizer {
 namespace Vits {
   class SequenceTokenizer {
     public:
-      SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<const int>& phoneme_ids);
+      SequenceTokenizer(const std::vector<std::string>& phonemes, const std::vector<int>& phoneme_ids);
       std::vector<int64_t> operator()(const std::vector<std::string>& phonemes) const;
 
     private:
