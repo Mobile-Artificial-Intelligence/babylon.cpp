@@ -45,7 +45,15 @@ namespace Vits {
         std::vector<int64_t> phoneme_ids = {1, 0};
         for (const auto& phoneme : phonemes) {
             try {
-                phoneme_ids.push_back(token_to_idx.at(phoneme));
+                int64_t id = token_to_idx.at(phoneme);
+
+                // This is to handle the subtle difference between deep_phonemizer and espeak-ng
+                if (id == 27 || id == 62) {
+                    phoneme_ids.push_back(120);
+                    phoneme_ids.push_back(0);
+                }
+
+                phoneme_ids.push_back(id);
                 phoneme_ids.push_back(0);
             } 
             catch (const std::out_of_range&) {
