@@ -76,7 +76,7 @@ onnx_model = onnx.load(onnx_file_path)
 metadata = {
     "languages": "de en_us",
     "text_symbols": "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ä ö ü Ä Ö Ü ß",
-    "phoneme_symbols": "a b d e f g h i j k l m n o p r s t u v w x y z æ ç ð ø ŋ œ ɐ ɑ ɔ ə ɛ ɜ ɹ ɡ ɪ ʁ ʃ ʊ ʌ ʏ ʒ ʔ ˈ ˌ ː ̃ ̍ ̥ ̩ ̯ ͡ θ",
+    "phoneme_symbols": "a b d e f g h i j k l m n o p r s t u v w x y z æ ç ð ø ŋ œ ɐ ɑ ɔ ə ɛ ɜ ɹ ɡ ɪ ʁ ʃ ʊ ʌ ʏ ʒ ʔ : ˌ ː ̃ ̍ ̥ ̩ ̯ ͡ θ",
     "char_repeats": "3" if isinstance(model, ForwardTransformer) else "1",
     "lowercase": "1"
 }
