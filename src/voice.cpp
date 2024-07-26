@@ -132,20 +132,6 @@ namespace Vits {
 
         std::vector<int64_t> phoneme_ids = phoneme_tokenizer->operator()(phonemes);
 
-        // Print ids
-        for (int64_t i = 0; i < phoneme_ids.size(); i++) {
-            std::cout << phoneme_ids[i] << " ";
-        }
-        std::cout << std::endl;
-
-        //std::string test_data = "1 0 32 0 120 0 61 0 23 0 31 0 32 0 3 0 32 0 59 0 3 0 31 0 28 0 120 0 21 0 122 0 32 0 96 0 3 0 25 0 120 0 51 0 122 0 17 0 59 0 24 0 38 0 3 0 23 0 39 0 26 0 3 0 15 0 21 0 122 0 3 0 22 0 120 0 33 0 122 0 38 0 17 0 3 0 32 0 59 0 3 0 17 0 108 0 120 0 61 0 26 0 60 0 88 0 121 0 18 0 74 0 32 0 3 0 31 0 28 0 120 0 21 0 122 0 32 0 96 0 3 0 19 0 88 0 102 0 25 0 3 0 32 0 120 0 61 0 23 0 31 0 32 0 10 0 2";
-        //std::vector<int64_t> phoneme_ids;
-        //std::stringstream phoneme_stream(test_data);
-        //std::string phoneme_buffer;
-        //while (phoneme_stream >> phoneme_buffer) {
-        //    phoneme_ids.push_back(std::stoi(phoneme_buffer));
-        //}
-
         std::vector<int64_t> phoneme_ids_shape = {1, (int64_t) phoneme_ids.size()};
         input_tensors.push_back(Ort::Value::CreateTensor<int64_t>(
             memory_info, 

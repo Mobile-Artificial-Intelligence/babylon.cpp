@@ -110,17 +110,16 @@ namespace DeepPhonemizer {
     }
 
     std::vector<float> softmax(const std::vector<float>& logits) {
-        std::vector<float> probabilities(logits.size());
         float max_logit = *std::max_element(logits.begin(), logits.end());
-        float sum = 0.0;
+        std::vector<float> probabilities(logits.size());
 
-        for (size_t i = 0; i < logits.size(); ++i) {
-            probabilities[i] = std::exp(logits[i] - max_logit);
-            sum += probabilities[i];
+        float sum = 0.0f;
+        for (float logit : logits) {
+            sum += std::exp(logit - max_logit);
         }
 
         for (size_t i = 0; i < logits.size(); ++i) {
-            probabilities[i] /= sum;
+            probabilities[i] = std::exp(logits[i] - max_logit) / sum;
         }
 
         return probabilities;
