@@ -14,9 +14,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [x86_64, aarch64]
 
     steps:
       - name: Checkout
@@ -25,21 +22,9 @@ jobs:
       - name: Install CMake
         run: sudo apt-get update | 
              sudo apt-get install -y cmake
-    
-      - name: Download ONNX Runtime
-        run: |
-          if [ "${{ matrix.arch }}" == "x86_64" ]; then
-              wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-x64-1.18.1.tgz -O onnxruntime.tgz
-          else
-              wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-aarch64-1.18.1.tgz -O onnxruntime.tgz
-          fi
-          mkdir -p onnxruntime
-          tar -xzf onnxruntime.tgz -C onnxruntime --strip-components 1
-          mkdir -p lib
-          rsync -a onnxruntime/lib/ lib/
 
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: cmake --build build --config Release
