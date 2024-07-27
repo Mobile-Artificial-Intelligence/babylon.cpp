@@ -32,7 +32,7 @@ extern "C" {
         return strdup(phonemes.c_str());
     }
 
-    BABYLON_EXPORT void babylon_g2p_free() {
+    BABYLON_EXPORT void babylon_g2p_free(void) {
         delete dp;
     }
 
@@ -57,7 +57,7 @@ extern "C" {
         }
     }
 
-    BABYLON_EXPORT void babylon_tts_free() {
+    BABYLON_EXPORT void babylon_tts_free(void) {
         delete vits;
     }
 }
