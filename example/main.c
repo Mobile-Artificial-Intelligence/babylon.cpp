@@ -10,7 +10,7 @@ int main() {
     babylon_tts(text, "./output.wav");
 
     babylon_tts_free();
-    
+
     babylon_g2p_free();
 
     return 0;
