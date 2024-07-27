@@ -29,7 +29,7 @@ jobs:
           tar -xzf onnxruntime-win-x64-1.18.1.zip -C onnxruntime --strip-components 1
 
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR="${{ github.workspace }}/onnxruntime"
 
       - name: Build
         run: cmake --build build --config Release
