@@ -31,7 +31,7 @@ jobs:
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
               wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-x64-1.18.1.tgz -O onnxruntime.tgz
           else
-              wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-arm64-1.18.1.tgz -O onnxruntime.tgz
+              wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-linux-aarch64-1.18.1.tgz -O onnxruntime.tgz
           fi
           mkdir -p onnxruntime
           tar -xzf onnxruntime.tgz -C onnxruntime --strip-components 1
