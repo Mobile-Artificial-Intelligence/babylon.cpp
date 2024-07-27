@@ -20,7 +20,7 @@ make
 
 ## Usage
 
-C Example:
+### C Example:
 
 ```c
 #include "babylon.h"
@@ -42,8 +42,7 @@ int main() {
 }
 ```
 
-
-C++ example:
+### C++ example:
 
 ```cpp
 #include "babylon.hpp"
