@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/build-macos.yml'
       - 'src/**'
       - 'include/**'
       - 'example/**'
@@ -16,7 +17,7 @@ jobs:
     strategy:
       matrix:
         arch: [x86_64, arm64]
-          
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -27,8 +28,20 @@ jobs:
       - name: Update CMake
         run: brew install cmake
 
+      - name: Download ONNX Runtime
+        run: |
+          if [ "${{ matrix.arch }}" == "x86_64" ]; then
+            wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-osx-x86_64-1.18.1.tgz -O onnxruntime.tgz
+          else
+            wget https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-osx-arm64-1.18.1.tgz -O onnxruntime.tgz
+          fi
+          mkdir -p onnxruntime
+          tar -xzf onnxruntime.tgz -C onnxruntime --strip-components 1
+          mkdir -p ${BABYLON_LIB_INSTALL_DIR}/lib
+          cp onnxruntime/lib/* ${BABYLON_LIB_INSTALL_DIR}/lib/
+
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} -DONNXRUNTIME_DIR=${PWD}/onnxruntime
 
       - name: Build
         run: cmake --build build --config Release

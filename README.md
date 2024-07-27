@@ -4,6 +4,8 @@
 
 # babylon.cpp
 
+[![Build MacOS](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-macos.yml/badge.svg)](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-macos.yml)
+
 Babylon.cpp is a C and C++ library for grapheme to phoneme conversion and text to speech synthesis. 
 For phonemization a ONNX runtime port of the [DeepPhonemizer](https://github.com/as-ideas/DeepPhonemizer) model is used. 
 For speech synthesis [VITS](https://github.com/jaywalnut310/vits) models are used. 
