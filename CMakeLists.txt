@@ -26,6 +26,7 @@ endif()
 add_library(
     babylon
     SHARED
+    src/babylon.cpp
     src/phonemizer.cpp
     src/voice.cpp
 )
