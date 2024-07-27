@@ -22,8 +22,16 @@ jobs:
       - name: Install CMake
         run: choco install -y cmake
 
+      - name: Download ONNX Runtime
+        run: |
+          curl -LO https://github.com/microsoft/onnxruntime/releases/download/v1.18.1/onnxruntime-win-x64-1.18.1.zip
+          mkdir onnxruntime
+          tar -xzf onnxruntime-win-x64-1.18.1.zip -C onnxruntime --strip-components 1
+          setx ONNXRUNTIME_DIR "%CD%\\onnxruntime"
+          setx PATH "%PATH%;%CD%\\onnxruntime\\lib"
+
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
-  
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=%ONNXRUNTIME_DIR%
+
       - name: Build
         run: cmake --build build --config Release
