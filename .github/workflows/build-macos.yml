@@ -56,27 +56,24 @@ jobs:
     needs: build
     runs-on: macos-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
       - name: Download x86_64 Build Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-x86_64
-          path: build-x86_64
+          name: build-macos-x86_64
+          path: build-macos-x86_64
 
       - name: Download arm64 Build Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-arm64
-          path: build-arm64
+          name: build-macos-arm64
+          path: build-macos-arm64
 
       - name: Create Universal dylibs
         run: |
           mkdir -p universal/lib
-          for dylib in build-x86_64/*.dylib; do
+          for dylib in build-macos-x86_64/*.dylib; do
             dylib_name=$(basename $dylib)
-            lipo -create build-x86_64/$dylib_name build-arm64/$dylib_name -output universal/$dylib_name
+            lipo -create build-macos-x86_64/$dylib_name build-macos-arm64/$dylib_name -output universal/$dylib_name
           done
 
       - name: Upload Universal dylibs
