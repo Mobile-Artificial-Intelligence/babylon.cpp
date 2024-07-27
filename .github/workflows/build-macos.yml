@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-macos-${{ matrix.arch }}
-          path: build/
+          path: lib/
 
   create-universal-dylibs:
     needs: build
@@ -74,13 +74,13 @@ jobs:
       - name: Create Universal dylibs
         run: |
           mkdir -p universal/lib
-          for dylib in build-x86_64/lib/*.dylib; do
+          for dylib in build-x86_64/*.dylib; do
             dylib_name=$(basename $dylib)
-            lipo -create build-x86_64/lib/$dylib_name build-arm64/lib/$dylib_name -output universal/lib/$dylib_name
+            lipo -create build-x86_64/$dylib_name build-arm64/$dylib_name -output universal/$dylib_name
           done
 
       - name: Upload Universal dylibs
         uses: actions/upload-artifact@v3
         with:
           name: universal-dylibs
-          path: universal/lib/
+          path: universal/
