@@ -12,7 +12,7 @@
     },
     "inference": {
         "noise_scale": 0.667,
-        "length_scale": 1,
+        "length_scale": 1.2,
         "noise_w": 0.8
     },
     "phoneme_type": "espeak",

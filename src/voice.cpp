@@ -111,7 +111,7 @@ namespace Vits {
 
         float noise_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_scale", allocator).get());
 
-        float length_scale = 1.3f; // std::stof(model_metadata.LookupCustomMetadataMapAllocated("length_scale", allocator).get());
+        float length_scale = std::stof(model_metadata.LookupCustomMetadataMapAllocated("length_scale", allocator).get());
 
         float noise_w = std::stof(model_metadata.LookupCustomMetadataMapAllocated("noise_w", allocator).get());
 
