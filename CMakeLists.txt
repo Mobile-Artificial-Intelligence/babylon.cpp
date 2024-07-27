@@ -106,28 +106,33 @@ target_include_directories(
     ${ONNXRUNTIME_DIR}/include
 )
 
-# Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
-file(
-    COPY ${ONNXRUNTIME_DIR}/lib/
-    DESTINATION ${BABYLON_LIB_INSTALL_DIR}
-)
-
 add_library(onnxruntime SHARED IMPORTED)
+add_library(onnxruntime_versioned SHARED IMPORTED)
 
 # Import options for onnxruntime
 if(WIN32)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
+    set(ONNXRUNTIME_LIB ${ONNXRUNTIME_DIR}/lib/onnxruntime.dll)
+    set(ONNXRUNTIME_VERSIONED_LIB ${ONNXRUNTIME_DIR}/lib/onnxruntime.dll)
 elseif(APPLE)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
+    set(ONNXRUNTIME_LIB ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
+    set(ONNXRUNTIME_VERSIONED_LIB ${ONNXRUNTIME_DIR}/lib/libonnxruntime.${ONNXRUNTIME_VERSION}.dylib)
 else()
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.so)
+    set(ONNXRUNTIME_LIB ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
+    set(ONNXRUNTIME_VERSIONED_LIB ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so.${ONNXRUNTIME_VERSION})
 endif()
+
+set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_LIB})
+set_target_properties(onnxruntime_versioned PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_VERSIONED_LIB})
 
 # Link onnxruntime to babylon
 target_link_libraries(
     babylon
     onnxruntime
+    onnxruntime_versioned
 )
+
+# Install the ONNX libraries
+file(COPY ${ONNXRUNTIME_DIR}/lib/ DESTINATION ${BABYLON_LIB_INSTALL_DIR})
 
 # Include example directory if EXAMPLES flag is set
 option(BUILD_EXAMPLES "Build examples" OFF)
