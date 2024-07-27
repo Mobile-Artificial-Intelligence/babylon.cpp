@@ -28,3 +28,9 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux
+          path: build/
