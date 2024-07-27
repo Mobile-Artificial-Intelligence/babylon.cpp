@@ -45,3 +45,42 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.arch }}
+          path: build/
+
+  create-universal-dylibs:
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download x86_64 Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-x86_64
+          path: build-x86_64
+
+      - name: Download arm64 Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-arm64
+          path: build-arm64
+
+      - name: Create Universal dylibs
+        run: |
+          mkdir -p universal/lib
+          for dylib in build-x86_64/lib/*.dylib; do
+            dylib_name=$(basename $dylib)
+            lipo -create build-x86_64/lib/$dylib_name build-arm64/lib/$dylib_name -output universal/lib/$dylib_name
+          done
+
+      - name: Upload Universal dylibs
+        uses: actions/upload-artifact@v3
+        with:
+          name: universal-dylibs
+          path: universal/lib/
