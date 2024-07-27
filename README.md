@@ -17,3 +17,48 @@ To build and run the library run the following commands:
 make
 ./bin/babylon_example
 ```
+
+## Usage
+
+C Example:
+
+```c
+#include "babylon.h"
+
+int main() {
+    babylon_g2p_init("path/to/deep_phonemizer.onnx", "en_us", 1);
+
+    const char* text = "Hello World";
+
+    babylon_tts_init("path/to/vits.onnx");
+
+    babylon_tts(text, "path/to/output.wav");
+
+    babylon_tts_free();
+    
+    babylon_g2p_free();
+
+    return 0;
+}
+```
+
+
+C++ example:
+
+```cpp
+#include "babylon.hpp"
+
+int main() {
+    DeepPhonemizer::Session dp("path/to/deep_phonemizer.onnx");
+
+    Vits::Session vits("path/to/vits.onnx");
+
+    std::string text = "Hello World";
+
+    std::vector<std::string> phonemes = dp.g2p(text);
+
+    vits.tts(phonemes, "path/to/output.wav");
+
+    return 0;
+}
+```
