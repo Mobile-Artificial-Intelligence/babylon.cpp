@@ -4,6 +4,7 @@
 
 # babylon.cpp
 
+[![Build Windows](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-windows.yml/badge.svg)](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-windows.yml)
 [![Build MacOS](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-macos.yml/badge.svg)](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-macos.yml)
 [![Build Linux](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-linux.yml/badge.svg)](https://github.com/Mobile-Artificial-Intelligence/babylon.cpp/actions/workflows/build-linux.yml)
 
