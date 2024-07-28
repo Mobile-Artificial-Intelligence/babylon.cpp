@@ -23,17 +23,17 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install CMake
-        run: sudo apt-get update && sudo apt-get install -y cmake unzip
+        run: sudo apt-get update && sudo apt-get install -y cmake
 
       - name: Download ONNX Runtime
         run: |
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-x64-static_lib-1.18.1.tgz -O onnxruntime.zip
+            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-x64-static_lib-1.18.1.tgz -O onnxruntime.tgz
           else
-            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1.tgz -O onnxruntime.zip
+            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1.tgz -O onnxruntime.tgz
           fi
           mkdir -p onnxruntime
-          tar -xzf onnxruntime.zip -C onnxruntime-temp --strip-components 1
+          tar -xzf onnxruntime.tgz -C onnxruntime-temp --strip-components 1
           mv onnxruntime-temp/*/* onnxruntime
           rm -rf onnxruntime-temp
 
