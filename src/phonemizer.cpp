@@ -133,8 +133,7 @@ namespace DeepPhonemizer {
         session_options.SetIntraOpNumThreads(1);
         session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
-        Ort::Session new_session(env, model_path.c_str(), session_options);
-        session = &new_session; // This cant be done in 1 line on windows for some reason
+        session = new Ort::Session(env, model_path.c_str(), session_options);
 
         // Load metadata from the model
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
