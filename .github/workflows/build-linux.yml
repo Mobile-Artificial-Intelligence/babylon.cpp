@@ -23,8 +23,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install CMake
-        run: sudo apt-get update | 
-             sudo apt-get install -y cmake
+        run: sudo apt-get update && sudo apt-get install -y cmake unzip
 
       - name: Download ONNX Runtime
         run: |
@@ -34,7 +33,9 @@ jobs:
             wget https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1-glibc2_17.zip -O onnxruntime.zip
           fi
           mkdir -p onnxruntime
-          unzip onnxruntime.zip -d onnxruntime
+          unzip onnxruntime.zip -d onnxruntime-temp
+          mv onnxruntime-temp/*/* onnxruntime
+          rm -rf onnxruntime-temp
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
