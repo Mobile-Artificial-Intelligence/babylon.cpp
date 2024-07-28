@@ -45,7 +45,7 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
     if(WIN32)
         # Windows x86-64
         set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-static_lib-${ONNXRUNTIME_VERSION}")
-        set(ONNXRUNTIME_EXT "tar.bz2")
+        set(ONNXRUNTIME_EXT "zip")
     elseif (APPLE)
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # MacOS x86-64
@@ -57,23 +57,23 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
             message(FATAL_ERROR "Unsupported architecture for onnxruntime")
         endif()
 
-        set(ONNXRUNTIME_EXT "zip")
+        set(ONNXRUNTIME_EXT "tgz")
     else()
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # Linux x86-64
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-static_lib-${ONNXRUNTIME_VERSION}-glibc2_17")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-static_lib-${ONNXRUNTIME_VERSION}")
         elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
             # Linux ARM 64-bit
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-1.18.0-glibc2_17")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-${ONNXRUNTIME_VERSION}")
         else()
             message(FATAL_ERROR "Unsupported architecture for onnxruntime")
         endif()
 
-        set(ONNXRUNTIME_EXT "zip")
+        set(ONNXRUNTIME_EXT "tgz")
     endif()
 
     if(NOT DEFINED ONNXRUNTIME_URL)
-        set(ONNXRUNTIME_URL "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
+        set(ONNXRUNTIME_URL "https://github.com/supertone-inc/onnxruntime-build/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
     endif()
 
     set(DOWNLOAD_DIR "${CMAKE_CURRENT_LIST_DIR}/download")

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86_64, arm64]
+        arch: [x86_64, aarch64]
 
     steps:
       - name: Checkout
@@ -28,12 +28,12 @@ jobs:
       - name: Download ONNX Runtime
         run: |
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            wget https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.18.1/onnxruntime-linux-x64-static_lib-1.18.1-glibc2_17.zip -O onnxruntime.zip
+            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-x64-static_lib-1.18.1.tgz -O onnxruntime.zip
           else
-            wget https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1-glibc2_17.zip -O onnxruntime.zip
+            wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1.tgz -O onnxruntime.zip
           fi
           mkdir -p onnxruntime
-          unzip onnxruntime.zip -d onnxruntime-temp
+          tar -xzf onnxruntime.zip -C onnxruntime-temp --strip-components 1
           mv onnxruntime-temp/*/* onnxruntime
           rm -rf onnxruntime-temp
 
