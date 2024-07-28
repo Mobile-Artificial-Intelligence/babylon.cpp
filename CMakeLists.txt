@@ -64,7 +64,7 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
             set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-static_lib-${ONNXRUNTIME_VERSION}-glibc2_17")
         elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
             # Linux ARM 64-bit
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-${ONNXRUNTIME_VERSION}-glibc2_17")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-1.18.0-glibc2_17")
         else()
             message(FATAL_ERROR "Unsupported architecture for onnxruntime")
         endif()
