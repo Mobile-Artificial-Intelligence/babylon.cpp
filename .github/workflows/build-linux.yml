@@ -35,8 +35,6 @@ jobs:
           fi
           mkdir -p onnxruntime
           tar -xzf onnxruntime.zip -C onnxruntime --strip-components 1
-          mkdir -p lib
-          rsync -a onnxruntime/lib/ lib/
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
