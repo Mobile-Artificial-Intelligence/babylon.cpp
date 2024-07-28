@@ -26,7 +26,7 @@ jobs:
         run: |
           curl -LO https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.18.1/onnxruntime-win-x64-static_lib-1.18.1.tar.bz2
           mkdir onnxruntime
-          tar -xzf onnxruntime-win-x64-static_lib-1.18.1.tar.bz2 -C onnxruntime --strip-components 1
+          tar -xjf onnxruntime-win-x64-static_lib-1.18.1.tar.bz2 -C onnxruntime --strip-components 1
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR="${{ github.workspace }}/onnxruntime"
