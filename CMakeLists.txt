@@ -115,6 +115,15 @@ target_link_libraries(
     onnxruntime
 )
 
+# Link against CoreFoundation and Foundation on macOS
+if(APPLE)
+    target_link_libraries(
+        babylon
+        "-framework CoreFoundation"
+        "-framework Foundation"
+    )
+endif()
+
 # Include example directory if EXAMPLES flag is set
 option(BUILD_EXAMPLES "Build examples" OFF)
 
