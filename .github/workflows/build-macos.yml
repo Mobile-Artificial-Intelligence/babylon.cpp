@@ -36,7 +36,7 @@ jobs:
             wget https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.18.1/onnxruntime-osx-arm64-static_lib-1.18.1.zip -O onnxruntime.zip
           fi
           mkdir -p onnxruntime
-          tar -xzf onnxruntime.tgz -C onnxruntime --strip-components 1
+          tar -xzf onnxruntime.zip -C onnxruntime --strip-components 1
           mkdir -p lib
           rsync -a onnxruntime/lib/ lib/
 
