@@ -44,40 +44,36 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
 
     if(WIN32)
         # Windows x86-64
-        set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-${ONNXRUNTIME_VERSION}")
-        set(ONNXRUNTIME_EXT "zip")
+        set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-static_lib-${ONNXRUNTIME_VERSION}")
+        set(ONNXRUNTIME_EXT "tar.bz2")
     elseif (APPLE)
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # MacOS x86-64
-            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-x86_64-${ONNXRUNTIME_VERSION}")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-x86_64-static_lib-${ONNXRUNTIME_VERSION}")
         elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL arm64)
             # MacOS Apple Silicon
-            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-arm64-${ONNXRUNTIME_VERSION}")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-arm64-static_lib-${ONNXRUNTIME_VERSION}")
         else()
             message(FATAL_ERROR "Unsupported architecture for onnxruntime")
         endif()
 
-        set(ONNXRUNTIME_EXT "tgz")
+        set(ONNXRUNTIME_EXT "zip")
     else()
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # Linux x86-64
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-static_lib-${ONNXRUNTIME_VERSION}-glibc2_17")
         elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
             # Linux ARM 64-bit
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-${ONNXRUNTIME_VERSION}")
-        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL armv7l)
-            # Linux ARM 32-bit
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-arm32-${ONNXRUNTIME_VERSION}")
-            set(ONNXRUNTIME_URL "https://github.com/synesthesiam/prebuilt-apps/releases/download/v1.0/onnxruntime-linux-arm32-${ONNXRUNTIME_VERSION}.tgz")
+            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-${ONNXRUNTIME_VERSION}-glibc2_17")
         else()
             message(FATAL_ERROR "Unsupported architecture for onnxruntime")
         endif()
 
-        set(ONNXRUNTIME_EXT "tgz")
+        set(ONNXRUNTIME_EXT "zip")
     endif()
 
     if(NOT DEFINED ONNXRUNTIME_URL)
-        set(ONNXRUNTIME_URL "https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
+        set(ONNXRUNTIME_URL "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
     endif()
 
     set(DOWNLOAD_DIR "${CMAKE_CURRENT_LIST_DIR}/download")
@@ -95,14 +91,6 @@ if(NOT DEFINED ONNXRUNTIME_DIR)
         # Extract .zip or .tgz to a directory like lib/onnxruntime-linux-x64-1.18.1/
         file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_FILENAME}" DESTINATION "${DOWNLOAD_DIR}")
     endif()
-
-    if(EXISTS "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so.${ONNXRUNTIME_VERSION}")
-        # Delete ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so
-        file(REMOVE "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
-    
-        # Rename ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so.1.18.1 to ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so
-        file(RENAME "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so.${ONNXRUNTIME_VERSION}" "${ONNXRUNTIME_DIR}/lib/libonnxruntime.so")
-    endif()
 endif()
 
 # set include directories
@@ -112,27 +100,19 @@ target_include_directories(
     ${ONNXRUNTIME_DIR}/include
 )
 
-add_library(onnxruntime SHARED IMPORTED)
+add_library(onnxruntime STATIC IMPORTED)
 
 # Import options for onnxruntime
 if(WIN32)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/onnxruntime.dll)
-elseif(APPLE)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.dylib)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/onnxruntime.lib)
 else()
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.so)
+    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.a)
 endif()
 
 # Link onnxruntime to babylon
 target_link_libraries(
     babylon
     onnxruntime
-)
-
-# Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
-file(
-    COPY ${ONNXRUNTIME_DIR}/lib/
-    DESTINATION ${BABYLON_LIB_INSTALL_DIR}
 )
 
 # Include example directory if EXAMPLES flag is set
