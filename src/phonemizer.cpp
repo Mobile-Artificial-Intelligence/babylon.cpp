@@ -1,5 +1,4 @@
 #include "babylon.hpp"
-#include "dictionary.hpp"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
 #include <sstream>
@@ -140,31 +139,49 @@ namespace DeepPhonemizer {
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
         Ort::AllocatorWithDefaultOptions allocator;
 
-        Ort::AllocatedStringPtr langs_ptr = model_metadata.LookupCustomMetadataMapAllocated("languages", allocator);
+        std::string langs_str = model_metadata.LookupCustomMetadataMapAllocated("languages", allocator).get();
 
         std::vector<std::string> languages;
-        std::stringstream languages_stream(langs_ptr.get());
+        std::stringstream languages_stream(langs_str);
         std::string language_buffer;
         while (languages_stream >> language_buffer) {
             languages.push_back(language_buffer);
         }
 
-        Ort::AllocatedStringPtr text_symbols_ptr = model_metadata.LookupCustomMetadataMapAllocated("text_symbols", allocator);
+        std::string text_symbols_str = model_metadata.LookupCustomMetadataMapAllocated("text_symbols", allocator).get();
 
         std::vector<std::string> text_symbols;
-        std::stringstream text_symbols_stream(text_symbols_ptr.get());
+        std::stringstream text_symbols_stream(text_symbols_str);
         std::string text_symbol_buffer;
         while (text_symbols_stream >> text_symbol_buffer) {
             text_symbols.push_back(text_symbol_buffer);
         }
 
-        Ort::AllocatedStringPtr phoneme_symbols_ptr = model_metadata.LookupCustomMetadataMapAllocated("phoneme_symbols", allocator);
+        std::string phoneme_symbols_str = model_metadata.LookupCustomMetadataMapAllocated("phoneme_symbols", allocator).get();
 
         std::vector<std::string> phoneme_symbols;
-        std::stringstream phoneme_symbols_stream(phoneme_symbols_ptr.get());
+        std::stringstream phoneme_symbols_stream(phoneme_symbols_str);
         std::string phoneme_symbol_buffer;
         while (phoneme_symbols_stream >> phoneme_symbol_buffer) {
             phoneme_symbols.push_back(phoneme_symbol_buffer);
+        }
+
+        std::string dictonary_str = model_metadata.LookupCustomMetadataMapAllocated("dictionary", allocator).get();
+
+        std::istringstream dictionary_stream(dictonary_str);
+        std::string line;
+        while (std::getline(dictionary_stream, line)) {
+            std::stringstream line_stream(line);
+            std::string word;
+            line_stream >> word;
+
+            std::vector<std::string> phonemes;
+            std::string phoneme;
+            while (line_stream >> phoneme) {
+                phonemes.push_back(phoneme);
+            }
+
+            dictionary[word] = phonemes;
         }
 
         int char_repeats = model_metadata.LookupCustomMetadataMapAllocated("char_repeats", allocator).get()[0] - '0';
