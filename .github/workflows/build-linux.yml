@@ -32,7 +32,7 @@ jobs:
           else
             wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1.tgz -O onnxruntime.tgz
           fi
-          mkdir -p onnxruntime
+          mkdir -p onnxruntime onnxruntime-temp
           tar -xzf onnxruntime.tgz -C onnxruntime-temp --strip-components 1
           mv onnxruntime-temp/*/* onnxruntime
           rm -rf onnxruntime-temp
