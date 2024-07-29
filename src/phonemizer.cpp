@@ -1,4 +1,5 @@
 #include "babylon.hpp"
+#include "dictionary.hpp"
 #include <onnxruntime_cxx_api.h>
 #include <iostream>
 #include <sstream>
@@ -216,6 +217,14 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
+        std::string text_lower = text;
+        std::transform(text_lower.begin(), text_lower.end(), text_lower.begin(), ::tolower);
+
+        // First check if word is in the dictionary
+        if (dictionary.count(text_lower)) {
+            return dictionary.at(text_lower);
+        }
+
         // Convert input text to tensor
         std::vector<Ort::Value> input_tensors;
         std::vector<int64_t> input_ids = text_tokenizer->operator()(text, lang);
