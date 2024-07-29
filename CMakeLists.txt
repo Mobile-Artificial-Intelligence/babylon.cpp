@@ -38,78 +38,23 @@ set_target_properties(
     LIBRARY_OUTPUT_DIRECTORY ${BABYLON_LIB_INSTALL_DIR}
 )
 
-# Look for onnxruntime files in <root>/lib
-if(NOT DEFINED ONNXRUNTIME_DIR)
-    set(ONNXRUNTIME_VERSION "1.18.1")
+set(onnxruntime_BUILD_SHARED_LIB ON)
+set(onnxruntime_BUILD_UNIT_TESTS OFF)
 
-    if(WIN32)
-        # Windows x86-64
-        set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-static_lib-${ONNXRUNTIME_VERSION}")
-        set(ONNXRUNTIME_EXT "zip")
-    elseif (APPLE)
-        if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
-            # MacOS x86-64
-            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-x86_64-static_lib-${ONNXRUNTIME_VERSION}")
-        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL arm64)
-            # MacOS Apple Silicon
-            set(ONNXRUNTIME_PREFIX "onnxruntime-osx-arm64-static_lib-${ONNXRUNTIME_VERSION}")
-        else()
-            message(FATAL_ERROR "Unsupported architecture for onnxruntime")
-        endif()
+# Set ONNX Runtime source directory
+set(ONNXRUNTIME_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/onnxruntime)
 
-        set(ONNXRUNTIME_EXT "tgz")
-    else()
-        if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
-            # Linux x86-64
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-x64-static_lib-${ONNXRUNTIME_VERSION}")
-        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
-            # Linux ARM 64-bit
-            set(ONNXRUNTIME_PREFIX "onnxruntime-linux-aarch64-static_lib-${ONNXRUNTIME_VERSION}")
-        else()
-            message(FATAL_ERROR "Unsupported architecture for onnxruntime")
-        endif()
+# Add ONNX Runtime subdirectory
+add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake)
 
-        set(ONNXRUNTIME_EXT "tgz")
-    endif()
-
-    if(NOT DEFINED ONNXRUNTIME_URL)
-        set(ONNXRUNTIME_URL "https://github.com/supertone-inc/onnxruntime-build/releases/download/v${ONNXRUNTIME_VERSION}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
-    endif()
-
-    set(DOWNLOAD_DIR "${CMAKE_CURRENT_LIST_DIR}/download")
-
-    set(ONNXRUNTIME_FILENAME "${DOWNLOAD_DIR}/${ONNXRUNTIME_PREFIX}.${ONNXRUNTIME_EXT}")
-    set(ONNXRUNTIME_DIR "${DOWNLOAD_DIR}/${ONNXRUNTIME_PREFIX}")
-
-    if(NOT EXISTS "${ONNXRUNTIME_DIR}")
-        if(NOT EXISTS "${ONNXRUNTIME_FILENAME}")
-            # Download onnxruntime release
-            message("Downloading ${ONNXRUNTIME_URL}")
-            file(DOWNLOAD "${ONNXRUNTIME_URL}" "${ONNXRUNTIME_FILENAME}")
-        endif()
-
-        # Extract .zip or .tgz to a directory like lib/onnxruntime-linux-x64-1.18.1/
-        file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_FILENAME}" DESTINATION "${DOWNLOAD_DIR}")
-    endif()
-endif()
-
-# set include directories
+# Include ONNX Runtime headers
 target_include_directories(
     babylon
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${ONNXRUNTIME_DIR}/include
+    ${ONNXRUNTIME_SOURCE_DIR}/include
 )
 
-add_library(onnxruntime STATIC IMPORTED)
-
-# Import options for onnxruntime
-if(WIN32)
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/onnxruntime.lib)
-else()
-    set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_DIR}/lib/libonnxruntime.a)
-endif()
-
-# Link onnxruntime to babylon
+# Link ONNX Runtime to babylon
 target_link_libraries(
     babylon
     onnxruntime
