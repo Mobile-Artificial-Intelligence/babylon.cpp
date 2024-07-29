@@ -24,11 +24,15 @@ jobs:
       - name: Install CMake
         run: sudo apt-get update && sudo apt-get install -y cmake
 
+      - name: Determine CPU Cores
+        id: cpu-info
+        run: echo "CPU_CORES=$(nproc)" >> $GITHUB_ENV
+
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
