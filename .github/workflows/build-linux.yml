@@ -14,9 +14,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [x86_64, aarch64]
 
     steps:
       - name: Checkout
