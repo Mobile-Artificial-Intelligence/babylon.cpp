@@ -32,10 +32,8 @@ jobs:
           else
             wget https://github.com/supertone-inc/onnxruntime-build/releases/download/v1.18.1/onnxruntime-linux-aarch64-static_lib-1.18.1.tgz -O onnxruntime.tgz
           fi
-          mkdir -p onnxruntime onnxruntime-temp
-          tar -xzf onnxruntime.tgz -C onnxruntime-temp --strip-components 1
-          mv onnxruntime-temp/*/* onnxruntime
-          rm -rf onnxruntime-temp
+          mkdir -p onnxruntime
+          tar -xzf onnxruntime.tgz -C onnxruntime --strip-components 1
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DONNXRUNTIME_DIR=${PWD}/onnxruntime
