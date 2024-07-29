@@ -234,12 +234,17 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
-        std::string text_lower = text;
-        std::transform(text_lower.begin(), text_lower.end(), text_lower.begin(), ::tolower);
+        // Check if the input text is longer than one character
+        if (text.length() > 1) {
+            std::string key_text = text;
+            std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);
 
-        // First check if word is in the dictionary
-        if (dictionary.count(text_lower)) {
-            return dictionary.at(text_lower);
+            key_text.erase(std::remove_if(key_text.begin(), key_text.end(), ::ispunct), key_text.end());
+
+            // First check if word is in the dictionary
+            if (dictionary.count(key_text)) {
+                return dictionary.at(key_text);
+            }
         }
 
         // Convert input text to tensor
