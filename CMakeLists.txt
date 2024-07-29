@@ -51,7 +51,7 @@ add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake)
 target_include_directories(
     babylon
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${ONNXRUNTIME_SOURCE_DIR}/include
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session
 )
 
 # Link ONNX Runtime to babylon
