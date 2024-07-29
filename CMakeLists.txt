@@ -47,6 +47,13 @@ set(ONNXRUNTIME_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/onnxruntime)
 # Add ONNX Runtime subdirectory
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake)
 
+# Set the output directory for the shared library
+set_target_properties(
+    onnxruntime
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${BABYLON_LIB_INSTALL_DIR}
+)
+
 # Include ONNX Runtime headers
 target_include_directories(
     babylon
