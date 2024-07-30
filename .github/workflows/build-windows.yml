@@ -24,14 +24,8 @@ jobs:
       - name: Install CMake
         run: choco install -y cmake
 
-      - name: Determine CPU Cores
-        id: cpu-info
-        run: |
-          echo "CPU_CORES=$NUMBER_OF_PROCESSORS"
-          echo "CPU_CORES=$NUMBER_OF_PROCESSORS" >> $GITHUB_ENV
-
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --config Release -- /m:${{ env.CPU_CORES }}
+        run: cmake --build build --config Release -- /m:4
