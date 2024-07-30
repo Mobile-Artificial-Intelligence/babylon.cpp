@@ -13,6 +13,12 @@ release:
 	@cd $(BUILD_DIR) && cmake $(CMAKE_FLAGS) -DCMAKE_BUILD_TYPE=Release ..
 	@$(MAKE) -C $(BUILD_DIR) -j$(CORES)
 
+# Source build
+source:
+	@mkdir -p $(BUILD_DIR)
+	@cd $(BUILD_DIR) && cmake $(CMAKE_FLAGS) -DCMAKE_BUILD_TYPE=Release -DBABYLON_BUILD_SOURCE=ON ..
+	@$(MAKE) -C $(BUILD_DIR) -j$(CORES)
+
 # Debug build
 debug:
 	@mkdir -p $(BUILD_DIR)
