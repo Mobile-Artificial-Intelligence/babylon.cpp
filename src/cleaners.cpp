@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 
 std::vector<std::string> split_into_threes(const std::string& str) {
