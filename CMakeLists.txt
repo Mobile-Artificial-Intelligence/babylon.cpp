@@ -154,8 +154,12 @@ target_link_directories(
     babylon PUBLIC
     ${BABYLON_LIB_INSTALL_DIR}
 )
-
-if(APPLE)
+if(WIN32)
+    target_link_libraries(
+        babylon
+        onnxruntime.lib
+    )
+elseif(APPLE)
     target_link_libraries(
         babylon
         onnxruntime
