@@ -17,7 +17,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set compiler options to support UTF-8 encoding
 if(MSVC)
-    add_compile_options("/utf-8")
+    # Force compiler to use UTF-8 for IPA constants
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 else()
     add_compile_options("-finput-charset=UTF-8" "-fexec-charset=UTF-8")
 endif()
