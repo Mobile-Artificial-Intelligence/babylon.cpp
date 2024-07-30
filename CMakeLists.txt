@@ -150,17 +150,7 @@ else()
     )
 endif()
 
-target_link_directories(
-    babylon PUBLIC
-    ${BABYLON_LIB_INSTALL_DIR}
-)
-
-if(WIN32)
-    target_link_libraries(
-        babylon
-        onnxruntime
-    )
-elseif(APPLE)
+if(APPLE)
     target_link_libraries(
         babylon
         onnxruntime

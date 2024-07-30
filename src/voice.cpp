@@ -77,7 +77,7 @@ namespace Vits {
         session_options.DisableMemPattern();
         session_options.DisableProfiling();
 
-        session = new Ort::Session(env, model_path.c_str(), session_options);
+        session = new Ort::Session(env, (const ORTCHAR_T *) model_path.c_str(), session_options);
 
         // Load metadata from the model
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
