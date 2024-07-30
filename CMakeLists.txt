@@ -42,6 +42,12 @@ if(BABYLON_BUILD_SOURCE OR ANDROID)
     # Set ONNX Runtime source directory
     set(ONNXRUNTIME_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/onnxruntime)
 
+    if(MSVC)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+        set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
+        set(protobuf_MSVC_STATIC_RUNTIME ON)
+    endif()
+
     # Set ONNX Runtime options
     set(onnxruntime_BUILD_SHARED_LIB ON)
     set(onnxruntime_BUILD_UNIT_TESTS OFF)   
@@ -65,10 +71,14 @@ if(BABYLON_BUILD_SOURCE OR ANDROID)
 else()
     set(ONNXRUNTIME_VERSION "1.18.1")
 
+    add_library(onnxruntime SHARED IMPORTED)
+
     if(WIN32)
         # Windows x86-64
         set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-${ONNXRUNTIME_VERSION}")
         set(ONNXRUNTIME_EXT "zip")
+
+        add_library(onnxruntime_providers SHARED IMPORTED)
     elseif (APPLE)
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # MacOS x86-64
@@ -119,8 +129,6 @@ else()
         file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_FILENAME}" DESTINATION "${DOWNLOAD_DIR}")
     endif()
 
-    add_library(onnxruntime SHARED IMPORTED)
-
     # Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
     file(
         COPY ${ONNXRUNTIME_SOURCE_DIR}/lib/
@@ -130,6 +138,12 @@ else()
     # Import options for onnxruntime
     if(WIN32)
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
+        set_target_properties(onnxruntime_providers PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime_providers_shared.dll)
+
+        target_link_libraries(
+            onnxruntime
+            onnxruntime_providers
+        )
     elseif(APPLE)
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
     else()
@@ -144,7 +158,6 @@ else()
     )
 endif()
 
-# Link against CoreFoundation and Foundation on macOS
 if(APPLE)
     target_link_libraries(
         babylon
