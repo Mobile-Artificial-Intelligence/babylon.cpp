@@ -150,6 +150,11 @@ else()
     )
 endif()
 
+target_link_directories(
+    babylon PUBLIC
+    ${BABYLON_LIB_INSTALL_DIR}
+)
+
 if(APPLE)
     target_link_libraries(
         babylon

@@ -58,7 +58,6 @@ namespace Vits {
             } 
             catch (const std::out_of_range&) {
                 std::cerr << "Token not found: " << phoneme << std::endl;
-                throw;
             }
         }
 
