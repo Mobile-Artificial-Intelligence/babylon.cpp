@@ -22,6 +22,9 @@ make
 ./bin/babylon_example
 ```
 
+To reduce compile time by default the libary uses onnxruntime shared libraries provided by microsoft.
+This can be overridden by setting `BABYLON_BUILD_SOURCE` to `ON`.
+
 ## Usage
 
 ### C Example:
