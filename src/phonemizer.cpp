@@ -224,9 +224,11 @@ namespace DeepPhonemizer {
                 std::vector<std::string> number_words = numbers_to_words(word);
 
                 for (const auto& number_word : number_words) {
+                    std::cout << number_word << " ";
                     word_phonemes = g2p_internal(number_word);
                     phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
                 }
+                std::cout << std::endl;
             }
             else {
                 word_phonemes = g2p_internal(word);
