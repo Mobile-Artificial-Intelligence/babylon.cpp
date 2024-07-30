@@ -119,23 +119,21 @@ else()
         file(ARCHIVE_EXTRACT INPUT "${ONNXRUNTIME_FILENAME}" DESTINATION "${DOWNLOAD_DIR}")
     endif()
 
-    if(EXISTS "${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so.${ONNXRUNTIME_VERSION}")
-        # Delete ${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so
-        file(REMOVE "${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so")
-    
-        # Rename ${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so.1.18.1 to ${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so
-        file(RENAME "${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so.${ONNXRUNTIME_VERSION}" "${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so")
-    endif()
-
     add_library(onnxruntime SHARED IMPORTED)
+
+    # Copy all files in ${ONNXRUNTIME_DIR}/lib to the install directory
+    file(
+        COPY ${ONNXRUNTIME_SOURCE_DIR}/lib/
+        DESTINATION ${BABYLON_LIB_INSTALL_DIR}
+    )
 
     # Import options for onnxruntime
     if(WIN32)
-        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_SOURCE_DIR}/lib/onnxruntime.dll)
+        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
     elseif(APPLE)
-        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.dylib)
+        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
     else()
-        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${ONNXRUNTIME_SOURCE_DIR}/lib/libonnxruntime.so)
+        set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.so)
     endif()
 
     # Include ONNX Runtime headers
