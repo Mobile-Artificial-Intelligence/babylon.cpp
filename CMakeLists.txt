@@ -17,9 +17,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set compiler options to support UTF-8 encoding
 if(MSVC)
-    # Force compiler to use UTF-8 for IPA constants
-    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+    add_compile_options("/utf-8")
 else()
     add_compile_options("-finput-charset=UTF-8" "-fexec-charset=UTF-8")
 endif()
@@ -79,8 +77,6 @@ else()
         # Windows x86-64
         set(ONNXRUNTIME_PREFIX "onnxruntime-win-x64-${ONNXRUNTIME_VERSION}")
         set(ONNXRUNTIME_EXT "zip")
-
-        add_library(onnxruntime_providers SHARED IMPORTED)
     elseif (APPLE)
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL x86_64)
             # MacOS x86-64
@@ -140,9 +136,6 @@ else()
     # Import options for onnxruntime
     if(WIN32)
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
-        set_target_properties(onnxruntime_providers PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime_providers_shared.dll)
-
-        set_target_properties(onnxruntime PROPERTIES INTERFACE_LINK_LIBRARIES onnxruntime_providers)
     elseif(APPLE)
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
     else()
@@ -157,17 +150,24 @@ else()
     )
 endif()
 
-if(APPLE)
+link_directories(${BABYLON_LIB_INSTALL_DIR})
+
+if(WIN32)
     target_link_libraries(
         babylon
-        PUBLIC onnxruntime
+        ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.lib
+    )
+elseif(APPLE)
+    target_link_libraries(
+        babylon
+        onnxruntime
         "-framework CoreFoundation"
         "-framework Foundation"
     )
 else()
     target_link_libraries(
         babylon
-        PUBLIC onnxruntime
+        onnxruntime
     )
 endif()
 
