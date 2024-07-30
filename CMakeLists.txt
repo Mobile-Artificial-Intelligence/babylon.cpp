@@ -150,12 +150,15 @@ else()
     )
 endif()
 
-link_directories(${BABYLON_LIB_INSTALL_DIR})
+target_link_directories(
+    babylon PUBLIC
+    ${BABYLON_LIB_INSTALL_DIR}
+)
 
 if(WIN32)
     target_link_libraries(
         babylon
-        ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.lib
+        onnxruntime
     )
 elseif(APPLE)
     target_link_libraries(
