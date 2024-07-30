@@ -63,7 +63,7 @@ if(BABYLON_BUILD_SOURCE OR ANDROID)
         ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session
     )
 else()
-    set(ONNXRUNTIME_VERSION "1.18.0")
+    set(ONNXRUNTIME_VERSION "1.18.1")
 
     if(WIN32)
         # Windows x86-64
