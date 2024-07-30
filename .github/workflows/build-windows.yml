@@ -29,3 +29,9 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release -- /m:4
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-x86_64
+          path: lib/
