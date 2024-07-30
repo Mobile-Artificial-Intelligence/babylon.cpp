@@ -4,6 +4,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include "numbers_to_words.hpp"
 
 namespace DeepPhonemizer {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase, bool append_start_end)
@@ -217,7 +218,20 @@ namespace DeepPhonemizer {
         // Convert each word to phonemes
         std::vector<std::string> phonemes;
         for (const auto& word : words) {
-            std::vector<std::string> word_phonemes = g2p_internal(word);
+            std::vector<std::string> word_phonemes;
+
+            if (std::all_of(word.begin(), word.end(), ::isdigit)) {
+                std::vector<std::string> number_words = numbers_to_words(word);
+
+                for (const auto& number_word : number_words) {
+                    word_phonemes = g2p_internal(number_word);
+                    phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
+                }
+            }
+            else {
+                word_phonemes = g2p_internal(word);
+            }
+            
             phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
 
             if (punctuation) {
@@ -235,16 +249,14 @@ namespace DeepPhonemizer {
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
         // Check if the input text is longer than one character
-        if (text.length() > 1) {
-            std::string key_text = text;
-            std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);
+        std::string key_text = text;
+        std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);
 
-            key_text.erase(std::remove_if(key_text.begin(), key_text.end(), ::ispunct), key_text.end());
+        key_text.erase(std::remove_if(key_text.begin(), key_text.end(), ::ispunct), key_text.end());
 
-            // First check if word is in the dictionary
-            if (dictionary.count(key_text)) {
-                return dictionary.at(key_text);
-            }
+        // First check if word is in the dictionary
+        if (dictionary.count(key_text)) {
+            return dictionary.at(key_text);
         }
 
         // Convert input text to tensor
