@@ -50,6 +50,8 @@ namespace DeepPhonemizer {
 
       std::vector<std::string> g2p_internal(const std::string& text);
   };
+
+  std::vector<std::string> numbers_to_words(const std::string& text);
 }
 
 namespace Vits {

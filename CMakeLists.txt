@@ -27,6 +27,7 @@ add_library(
     babylon
     SHARED
     src/babylon.cpp
+    src/cleaners.cpp
     src/phonemizer.cpp
     src/voice.cpp
 )

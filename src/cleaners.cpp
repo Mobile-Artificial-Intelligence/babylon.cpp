@@ -134,31 +134,33 @@ std::string hundreds_to_words(int hundreds) {
     return result;
 }
 
-std::vector<std::string> numbers_to_words(const std::string& text) {
-    std::vector<std::string> result;
-    std::vector<std::string> parts = split_into_threes(text);
-    std::vector<std::string> suffixes = {
-        "thousand", 
-        "million", 
-        "billion", 
-        "trillion", 
-        "quadrillion", 
-        "quintillion",
-        "sextillion",
-        "septillion",
-        "octillion",
-        "nonillion",
-        "decillion"
-    };
+namespace DeepPhonemizer {
+    std::vector<std::string> numbers_to_words(const std::string& text) {
+        std::vector<std::string> result;
+        std::vector<std::string> parts = split_into_threes(text);
+        std::vector<std::string> suffixes = {
+            "thousand", 
+            "million", 
+            "billion", 
+            "trillion", 
+            "quadrillion", 
+            "quintillion",
+            "sextillion",
+            "septillion",
+            "octillion",
+            "nonillion",
+            "decillion"
+        };
 
-    for (int i = 0; i < parts.size(); i++) {
-        int number = std::stoi(parts[i]);
-        result.push_back(hundreds_to_words(number));
+        for (int i = 0; i < parts.size(); i++) {
+            int number = std::stoi(parts[i]);
+            result.push_back(hundreds_to_words(number));
 
-        if (i > 0 && i < suffixes.size()) {
-            result.back() += " " + suffixes[i - 1];
+            if (i > 0 && i < suffixes.size()) {
+                result.back() += " " + suffixes[i - 1];
+            }
         }
-    }
 
-    return result;
+        return result;
+    }
 }

@@ -4,7 +4,6 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-#include "numbers_to_words.hpp"
 
 namespace DeepPhonemizer {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase, bool append_start_end)
