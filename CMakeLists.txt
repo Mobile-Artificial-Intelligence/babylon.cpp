@@ -140,10 +140,7 @@ else()
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime.dll)
         set_target_properties(onnxruntime_providers PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/onnxruntime_providers_shared.dll)
 
-        target_link_libraries(
-            onnxruntime
-            onnxruntime_providers
-        )
+        set_target_properties(onnxruntime PROPERTIES INTERFACE_LINK_LIBRARIES onnxruntime_providers)
     elseif(APPLE)
         set_target_properties(onnxruntime PROPERTIES IMPORTED_LOCATION ${BABYLON_LIB_INSTALL_DIR}/libonnxruntime.dylib)
     else()
@@ -161,14 +158,14 @@ endif()
 if(APPLE)
     target_link_libraries(
         babylon
-        onnxruntime
+        PUBLIC onnxruntime
         "-framework CoreFoundation"
         "-framework Foundation"
     )
 else()
     target_link_libraries(
         babylon
-        onnxruntime
+        PUBLIC onnxruntime
     )
 endif()
 
