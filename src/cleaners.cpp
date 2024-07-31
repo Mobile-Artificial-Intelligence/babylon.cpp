@@ -5,10 +5,9 @@
 
 std::vector<std::string> split_into_threes(const std::string& str) {
     std::vector<std::string> parts;
-    int length = str.length();
 
     // Process the string from the end
-    for (int i = length; i > 0; i -= 3) {
+    for (int i = str.length(); i > 0; i -= 3) {
         if (i < 3) {
             parts.push_back(str.substr(0, i));
         } else {
@@ -100,10 +99,11 @@ std::string teens_to_word(int teens) {
 }
 
 std::vector<std::string> hundreds_to_words(int hundreds) {
+    const int hundreds_digit = hundreds / 100;
+    const int tens_digit = (hundreds % 100) / 10;
+    const int ones_digit = hundreds % 10;
+
     std::vector<std::string> result;
-    int hundreds_digit = hundreds / 100;
-    int tens_digit = (hundreds % 100) / 10;
-    int ones_digit = hundreds % 10;
 
     if (hundreds_digit > 0) {
         result.push_back(number_to_word(hundreds_digit));
@@ -129,9 +129,7 @@ std::vector<std::string> hundreds_to_words(int hundreds) {
 
 namespace DeepPhonemizer {
     std::vector<std::string> numbers_to_words(const std::string& text) {
-        std::vector<std::string> result;
-        std::vector<std::string> parts = split_into_threes(text);
-        std::vector<std::string> suffixes = {
+        const std::vector<std::string> suffixes = {
             "thousand", 
             "million", 
             "billion", 
@@ -144,6 +142,10 @@ namespace DeepPhonemizer {
             "nonillion",
             "decillion"
         };
+
+        const std::vector<std::string> parts = split_into_threes(text);
+
+        std::vector<std::string> result;
 
         for (int i = 0; i < parts.size(); i++) {
             int number = std::stoi(parts[i]);

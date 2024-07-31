@@ -247,8 +247,6 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
-        std::cout << "<" << text << ">" << std::endl;
-
         // Check if the input text is longer than one character
         std::string key_text = text;
         std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);
