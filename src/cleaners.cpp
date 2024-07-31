@@ -99,37 +99,29 @@ std::string teens_to_word(int teens) {
     }
 }
 
-std::string hundreds_to_words(int hundreds) {
-    std::string result;
+std::vector<std::string> hundreds_to_words(int hundreds) {
+    std::vector<std::string> result;
     int hundreds_digit = hundreds / 100;
     int tens_digit = (hundreds % 100) / 10;
     int ones_digit = hundreds % 10;
 
     if (hundreds_digit > 0) {
-        result += number_to_word(hundreds_digit) + " hundred";
+        result.push_back(number_to_word(hundreds_digit));
+        result.push_back("hundred");
 
         if (tens_digit > 0 || ones_digit > 0) {
-            result += " and";
+            result.push_back("and");
         }
     }
 
     if (tens_digit > 1) {
-        if (result.length() > 0) {
-            result += " ";
-        }
-        result += tens_to_word(tens_digit);
+        result.push_back(tens_to_word(tens_digit));
     } else if (tens_digit == 1) {
-        if (result.length() > 0) {
-            result += " ";
-        }
-        result += teens_to_word(hundreds % 100);
+        result.push_back(teens_to_word(hundreds % 100));
     }
 
     if (ones_digit > 0 && tens_digit != 1) {
-        if (result.length() > 0) {
-            result += " ";
-        }
-        result += number_to_word(ones_digit);
+        result.push_back(number_to_word(ones_digit));
     }
 
     return result;
@@ -140,22 +132,24 @@ namespace DeepPhonemizer {
         std::vector<std::string> result;
         std::vector<std::string> parts = split_into_threes(text);
         std::vector<std::string> suffixes = {
-            " thousand", 
-            " million", 
-            " billion", 
-            " trillion", 
-            " quadrillion", 
-            " quintillion",
-            " sextillion",
-            " septillion",
-            " octillion",
-            " nonillion",
-            " decillion"
+            "thousand", 
+            "million", 
+            "billion", 
+            "trillion", 
+            "quadrillion", 
+            "quintillion",
+            "sextillion",
+            "septillion",
+            "octillion",
+            "nonillion",
+            "decillion"
         };
 
         for (int i = 0; i < parts.size(); i++) {
             int number = std::stoi(parts[i]);
-            result.push_back(hundreds_to_words(number));
+            std::vector<std::string> words = hundreds_to_words(number);
+
+            result.insert(result.end(), words.begin(), words.end());
 
             if (i > 0 && i < suffixes.size()) {
                 result.push_back(suffixes[i - 1]);
