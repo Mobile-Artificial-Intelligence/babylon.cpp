@@ -223,11 +223,9 @@ namespace DeepPhonemizer {
                 std::vector<std::string> number_words = numbers_to_words(word);
 
                 for (const auto& number_word : number_words) {
-                    std::cout << number_word << " ";
                     word_phonemes = g2p_internal(number_word);
                     phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
                 }
-                std::cout << std::endl;
             }
             else {
                 word_phonemes = g2p_internal(word);
@@ -249,6 +247,8 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p_internal(const std::string& text) {
+        std::cout << "<" << text << ">" << std::endl;
+
         // Check if the input text is longer than one character
         std::string key_text = text;
         std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);

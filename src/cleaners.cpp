@@ -140,17 +140,17 @@ namespace DeepPhonemizer {
         std::vector<std::string> result;
         std::vector<std::string> parts = split_into_threes(text);
         std::vector<std::string> suffixes = {
-            "thousand", 
-            "million", 
-            "billion", 
-            "trillion", 
-            "quadrillion", 
-            "quintillion",
-            "sextillion",
-            "septillion",
-            "octillion",
-            "nonillion",
-            "decillion"
+            " thousand", 
+            " million", 
+            " billion", 
+            " trillion", 
+            " quadrillion", 
+            " quintillion",
+            " sextillion",
+            " septillion",
+            " octillion",
+            " nonillion",
+            " decillion"
         };
 
         for (int i = 0; i < parts.size(); i++) {
@@ -158,7 +158,7 @@ namespace DeepPhonemizer {
             result.push_back(hundreds_to_words(number));
 
             if (i > 0 && i < suffixes.size()) {
-                result.back() += " " + suffixes[i - 1];
+                result.push_back(suffixes[i - 1]);
             }
         }
 
