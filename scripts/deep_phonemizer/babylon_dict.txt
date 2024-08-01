@@ -53509,9 +53509,6 @@ i'll	a ɪ l
 i'm	a ɪ m
 i's	a ɪ z
 i've	a ɪ v
-i	ˈ a ɪ
-i	'S	a ɪ   ˈ ɛ s
-i	S	a ɪ   ˈ ɛ s
 ia	ˈ a ɪ ə
 iacobelli	ˌ a ɪ ɐ k ə b ˈ ɛ l i
 iacobellis	ˌ a ɪ ɐ k ə b ˈ ɛ l ɪ z
@@ -54279,7 +54276,6 @@ in's	ˈ ɪ n z
 in-house	ɪ n h ˈ a ʊ s
 in-law	ɪ n l ˈ ɔ ː
 in-laws	ɪ n l ˈ ɔ ː z
-in	ˈ ɪ n
 ina	ɪ n ˈ e ɪ
 inability	ɪ n ɐ b ˈ ɪ l ə ɾ i
 inabinet	ɪ n ˈ æ b ɪ n ˌ ɛ t
@@ -56397,7 +56393,7 @@ istre	ˈ ɪ s t ɚ
 isty	ˈ ɪ s t i
 isu	ˈ ɪ s u ː
 isuzu	ɪ s ˈ u ː z u ː
-it	ˌ a ɪ t ˈ i ː
+it	ˈ ɪ t
 it'd	ɪ ɾ ə d
 it'll	ˈ ɪ ɾ ə l
 it's	ˈ ɪ t s
