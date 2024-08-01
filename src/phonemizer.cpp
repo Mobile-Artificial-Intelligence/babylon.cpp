@@ -59,6 +59,10 @@ namespace DeepPhonemizer {
             sequence.push_back(pad_index);
         }
 
+        if (sequence.size() > max_length) {
+            sequence.resize(max_length);
+        }
+
         return sequence;
     }
 
@@ -211,25 +215,22 @@ namespace DeepPhonemizer {
         std::stringstream ss(text);
         std::string word;
         while (ss >> word) {
-            words.push_back(word);
+            std::string cleaned_word(word);
+            cleaned_word.erase(std::remove_if(cleaned_word.begin(), cleaned_word.end(), ::ispunct), cleaned_word.end());
+
+            if (std::all_of(cleaned_word.begin(), cleaned_word.end(), ::isdigit)) {
+                std::vector<std::string> number_words = numbers_to_words(word);
+                words.insert(words.end(), number_words.begin(), number_words.end());
+            }
+            else {
+                words.push_back(word);
+            }
         }
 
         // Convert each word to phonemes
         std::vector<std::string> phonemes;
         for (const auto& word : words) {
-            std::vector<std::string> word_phonemes;
-
-            if (std::all_of(word.begin(), word.end(), ::isdigit)) {
-                std::vector<std::string> number_words = numbers_to_words(word);
-
-                for (const auto& number_word : number_words) {
-                    word_phonemes = g2p_internal(number_word);
-                    phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
-                }
-            }
-            else {
-                word_phonemes = g2p_internal(word);
-            }
+            std::vector<std::string> word_phonemes = g2p_internal(word);
             
             phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
 
