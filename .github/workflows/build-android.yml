@@ -21,11 +21,10 @@ jobs:
         with:
           submodules: recursive
   
-      - name: Install CMake
-        run: | 
-          sudo apt-get update |
-          sudo apt-get install -y cmake
-          echo "CMake Version: $(cmake --version)"
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.26.0'
 
       - name: Setup NDK
         run: |
