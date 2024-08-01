@@ -30,6 +30,9 @@ jobs:
       - name: Build
         run: cmake --build build --config Release -- /m:4
 
+      - name: Print Directory Structure
+        run: tree
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
