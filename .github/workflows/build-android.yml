@@ -28,9 +28,9 @@ jobs:
 
       - name: Setup NDK
         run: |
-          wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
-          unzip android-ndk-r26b-linux.zip
-          export ANDROID_NDK=${PWD}/android-ndk-r26b
+          wget https://dl.google.com/android/repository/android-ndk-r27-linux.zip
+          unzip android-ndk-r27-linux.zip
+          export ANDROID_NDK=${PWD}/android-ndk-r27
 
       - name: Determine CPU Cores
         id: cpu-info
