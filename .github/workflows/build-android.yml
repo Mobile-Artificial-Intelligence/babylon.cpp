@@ -20,8 +20,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-  
-      - name: Setup cmake
+
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.26.0'
@@ -31,6 +31,11 @@ jobs:
           wget https://dl.google.com/android/repository/android-ndk-r27-linux.zip
           unzip android-ndk-r27-linux.zip
           export ANDROID_NDK_HOME=${PWD}/android-ndk-r27
+          echo "ANDROID_NDK_HOME=${PWD}/android-ndk-r27" >> $GITHUB_ENV
+
+      - name: Verify NDK Version
+        run: |
+          ${ANDROID_NDK_HOME}/ndk-build --version
 
       - name: Determine CPU Cores
         id: cpu-info
