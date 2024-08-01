@@ -219,7 +219,7 @@ namespace DeepPhonemizer {
             cleaned_word.erase(std::remove_if(cleaned_word.begin(), cleaned_word.end(), ::ispunct), cleaned_word.end());
 
             if (std::all_of(cleaned_word.begin(), cleaned_word.end(), ::isdigit)) {
-                std::vector<std::string> number_words = numbers_to_words(word);
+                std::vector<std::string> number_words = numbers_to_words(cleaned_word);
                 words.insert(words.end(), number_words.begin(), number_words.end());
             }
             else {
