@@ -52,4 +52,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: android-arm64-v8a
-          path: lib/
+          path: |
+            lib/
+            include/

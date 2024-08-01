@@ -44,7 +44,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.os }}
-          path: lib/
+          path: |
+            lib/
+            include/
 
   create-universal-dylibs:
     needs: build
@@ -65,10 +67,13 @@ jobs:
       - name: Create Universal dylibs
         run: |
           mkdir -p universal/lib
-          for dylib in macos-13/*.dylib; do
+          for dylib in macos-13/lib/*.dylib; do
             dylib_name=$(basename $dylib)
-            lipo -create macos-13/$dylib_name macos-14/$dylib_name -output universal/$dylib_name
+            lipo -create macos-13/lib/$dylib_name macos-14/lib/$dylib_name -output universal/lib/$dylib_name
           done
+
+      - name: Add Include Directory
+        run: cp -r macos-13/include universal/include
 
       - name: Upload Universal dylibs
         uses: actions/upload-artifact@v3

@@ -38,4 +38,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-x86_64
-          path: lib/
+          path: |
+            lib/
+            include/
