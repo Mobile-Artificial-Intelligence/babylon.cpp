@@ -25,6 +25,7 @@ jobs:
         run: | 
           sudo apt-get update |
           sudo apt-get install -y cmake
+          echo "CMake Version: $(cmake --version)"
 
       - name: Setup NDK
         run: |
