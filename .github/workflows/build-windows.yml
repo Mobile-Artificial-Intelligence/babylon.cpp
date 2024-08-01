@@ -30,8 +30,8 @@ jobs:
       - name: Build
         run: cmake --build build --config Release -- /m:4
 
-      - name: Print Directory Structure
-        run: tree
+      - name: Copy Everything from \build\Release\ to \lib
+        run: xcopy /E /Y build\Release\ lib\
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
