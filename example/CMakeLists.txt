@@ -2,6 +2,6 @@ cmake_minimum_required(VERSION 3.18)
 
 project(babylon_example)
 
-add_executable(babylon_example main.c)
+add_executable(babylon_example main.cpp)
 
 target_link_libraries(babylon_example babylon)
