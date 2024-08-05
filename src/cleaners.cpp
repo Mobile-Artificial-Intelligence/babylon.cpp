@@ -153,8 +153,10 @@ namespace DeepPhonemizer {
 
             result.insert(result.end(), words.begin(), words.end());
 
-            if (i > 0 && i < suffixes.size()) {
-                result.push_back(suffixes[i - 1]);
+            if (i < suffixes.size() && i < parts.size() - 1) {
+                int suffix = parts.size() - i - 2;
+
+                result.push_back(suffixes[suffix]);
             }
         }
 
