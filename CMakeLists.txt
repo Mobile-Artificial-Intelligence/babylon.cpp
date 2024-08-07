@@ -32,6 +32,12 @@ add_library(
     src/voice.cpp
 )
 
+if(COMPILER_SUPPORTS_FUSE_LD_GOLD)
+  target_link_options(babylon PRIVATE "--build-id=none")
+else()
+  message(WARNING "The linker does not support --build-id=none. Skipping this flag for target babylon.")
+endif()
+
 # Set the output directory for the shared library
 set_target_properties(
     babylon
