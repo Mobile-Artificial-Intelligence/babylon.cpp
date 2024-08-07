@@ -32,6 +32,9 @@ add_library(
     src/voice.cpp
 )
 
+# Add linker options to disable build id
+target_link_options(babylon PRIVATE "--build-id=none")
+
 # Set the output directory for the shared library
 set_target_properties(
     babylon
