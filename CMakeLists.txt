@@ -33,7 +33,8 @@ add_library(
 )
 
 if(NOT APPLE)
-    target_link_options(babylon PRIVATE "-Wl,--build-id=none")
+    target_link_options(babylon PRIVATE LINKER:--build-id=none)
+    target_compile_options(babylon PRIVATE "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=babylon")
 endif()
 
 # Set the output directory for the shared library
