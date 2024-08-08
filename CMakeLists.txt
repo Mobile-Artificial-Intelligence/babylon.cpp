@@ -32,6 +32,8 @@ add_library(
     src/voice.cpp
 )
 
+target_link_options(babylon PRIVATE LINKER:--build-id=none)
+
 # Set the output directory for the shared library
 set_target_properties(
     babylon
