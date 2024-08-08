@@ -33,7 +33,7 @@ add_library(
 )
 
 if(NOT APPLE)
-    target_link_options(babylon PRIVATE LINKER:--build-id=none)
+    target_link_options(babylon PRIVATE "-Wl,--build-id=none")
 endif()
 
 # Set the output directory for the shared library
