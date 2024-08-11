@@ -18,6 +18,11 @@ extern "C" {
     }
 
     BABYLON_EXPORT char* babylon_g2p(const char* text) {
+        if (dp == nullptr) {
+            std::cerr << "DeepPhonemizer session not initialized." << std::endl;
+            return nullptr;
+        }
+
         std::string phonemes = "";
         try {
             std::vector<std::string> phoneme_vec = dp->g2p(text);
@@ -48,6 +53,16 @@ extern "C" {
     }
 
     BABYLON_EXPORT void babylon_tts(const char* text, const char* output_path) {
+        if (vits == nullptr) {
+            std::cerr << "VITS session not initialized." << std::endl;
+            return;
+        }
+
+        if (dp == nullptr) {
+            std::cerr << "DeepPhonemizer session not initialized." << std::endl;
+            return;
+        }
+
         try {
             std::vector<std::string> phonemes = dp->g2p(text);
             vits->tts(phonemes, output_path);
