@@ -55,11 +55,12 @@ def free_tts():
 
 # Example usage
 if __name__ == '__main__':
-    model_path = 'path/to/model'
-    language = 'en'
+    g2p_model_path = './models/deep_phonemizer.onnx'
+    tts_model_path = './models/curie.onnx'
+    language = 'en_us'
     use_punctuation = 1
     
-    if init_g2p(model_path, language, use_punctuation) == 0:
+    if init_g2p(g2p_model_path, language, use_punctuation) == 0:
         print('G2P initialized successfully')
         phonemes = g2p('Hello world')
         print(f'Phonemes: {phonemes}')
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     else:
         print('Failed to initialize G2P')
 
-    if init_tts(model_path) == 0:
+    if init_tts(tts_model_path) == 0:
         print('TTS initialized successfully')
         tts('Hello world', 'output.wav')
         free_tts()
