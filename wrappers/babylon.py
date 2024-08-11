@@ -3,9 +3,9 @@ import os
 
 # Load the shared library
 if os.name == 'nt':  # Windows
-    babylon_lib = ctypes.CDLL('babylon.dll')
-elif os.name == 'mac':  # macOS
-    babylon_lib = ctypes.CDLL('./babylon.dylib')
+    babylon_lib = ctypes.CDLL('libbabylon.dll')
+elif os.name == 'posix':  # macOS
+    babylon_lib = ctypes.CDLL('./libbabylon.dylib')
 else:  # Linux/Unix
     babylon_lib = ctypes.CDLL('./babylon.so')
 
