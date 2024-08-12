@@ -209,23 +209,8 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p(const std::string& text) {
-        // Split sentence into words
-        std::vector<std::string> words;
-        
-        std::stringstream ss(text);
-        std::string word;
-        while (ss >> word) {
-            std::string cleaned_word(word);
-            cleaned_word.erase(std::remove_if(cleaned_word.begin(), cleaned_word.end(), ::ispunct), cleaned_word.end());
-
-            if (std::all_of(cleaned_word.begin(), cleaned_word.end(), ::isdigit)) {
-                std::vector<std::string> number_words = numbers_to_words(cleaned_word);
-                words.insert(words.end(), number_words.begin(), number_words.end());
-            }
-            else {
-                words.push_back(word);
-            }
-        }
+        // Clean the input text
+        std::vector<std::string> words = clean_text(text);
 
         // Convert each word to phonemes
         std::vector<std::string> phonemes;

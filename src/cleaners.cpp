@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 std::vector<std::string> split_into_threes(const std::string& str) {
     std::vector<std::string> parts;
@@ -127,39 +128,64 @@ std::vector<std::string> hundreds_to_words(int hundreds) {
     return result;
 }
 
+std::vector<std::string> numbers_to_words(const std::string& text) {
+    const std::vector<std::string> suffixes = {
+        "thousand", 
+        "million", 
+        "billion", 
+        "trillion", 
+        "quadrillion", 
+        "quintillion",
+        "sextillion",
+        "septillion",
+        "octillion",
+        "nonillion",
+        "decillion"
+    };
+
+    const std::vector<std::string> parts = split_into_threes(text);
+
+    std::vector<std::string> result;
+
+    for (int i = 0; i < parts.size(); i++) {
+        int number = std::stoi(parts[i]);
+        std::vector<std::string> words = hundreds_to_words(number);
+
+        result.insert(result.end(), words.begin(), words.end());
+
+        if (i < suffixes.size() && i < parts.size() - 1) {
+            int suffix = parts.size() - i - 2;
+
+            result.push_back(suffixes[suffix]);
+        }
+    }
+
+    return result;
+}
+
 namespace DeepPhonemizer {
-    std::vector<std::string> numbers_to_words(const std::string& text) {
-        const std::vector<std::string> suffixes = {
-            "thousand", 
-            "million", 
-            "billion", 
-            "trillion", 
-            "quadrillion", 
-            "quintillion",
-            "sextillion",
-            "septillion",
-            "octillion",
-            "nonillion",
-            "decillion"
-        };
+    std::vector<std::string> clean_text(const std::string& text) {
+        std::vector<std::string> words;
 
-        const std::vector<std::string> parts = split_into_threes(text);
+        std::stringstream ss(text);
+        std::string word;
+        while (ss >> word) {
+            std::string cleaned_word(word);
+            cleaned_word.erase(std::remove_if(cleaned_word.begin(), cleaned_word.end(), ::ispunct), cleaned_word.end());
 
-        std::vector<std::string> result;
-
-        for (int i = 0; i < parts.size(); i++) {
-            int number = std::stoi(parts[i]);
-            std::vector<std::string> words = hundreds_to_words(number);
-
-            result.insert(result.end(), words.begin(), words.end());
-
-            if (i < suffixes.size() && i < parts.size() - 1) {
-                int suffix = parts.size() - i - 2;
-
-                result.push_back(suffixes[suffix]);
+            if (std::all_of(cleaned_word.begin(), cleaned_word.end(), ::isdigit)) {
+                std::vector<std::string> number_words = numbers_to_words(cleaned_word);
+                words.insert(words.end(), number_words.begin(), number_words.end());
+            }
+            else {
+                words.push_back(word);
             }
         }
 
-        return result;
+        if (!word.empty()) {
+            words.push_back(word);
+        }
+
+        return words;
     }
 }
