@@ -25,9 +25,6 @@ namespace DeepPhonemizer {
       std::string pad_token;
       std::string end_token;
       std::unordered_set<std::string> special_tokens;
-  
-      int get_start_index(const std::string& language) const;
-      std::string make_start_token(const std::string& language) const;
   };
 
   class Session {

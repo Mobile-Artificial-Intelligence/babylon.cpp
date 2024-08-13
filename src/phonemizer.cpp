@@ -20,7 +20,7 @@ std::vector<float> softmax(const std::vector<float>& logits) {
     for (size_t i = 0; i < logits.size(); ++i) {
         probabilities[i] = std::exp(logits[i] - max_logit) / sum;
     }
-    
+
     return probabilities;
 }
 
@@ -33,7 +33,7 @@ namespace DeepPhonemizer {
         special_tokens.insert(pad_token);
 
         for (const auto& lang : languages) {
-            std::string lang_token = make_start_token(lang);
+            std::string lang_token = "<" + lang + ">";
             token_to_idx[lang_token] = token_to_idx.size();
             special_tokens.insert(lang_token);
         }
@@ -68,7 +68,7 @@ namespace DeepPhonemizer {
         }
 
         if (append_start_end) {
-            sequence.insert(sequence.begin(), get_start_index(language));
+            sequence.insert(sequence.begin(), token_to_idx.at("<" + language + ">"));
             sequence.push_back(end_index);
         }
 
@@ -121,15 +121,6 @@ namespace DeepPhonemizer {
         }
 
         return decoded;
-    }
-
-    int SequenceTokenizer::get_start_index(const std::string& language) const {
-        std::string lang_token = make_start_token(language);
-        return token_to_idx.at(lang_token);
-    }
-
-    std::string SequenceTokenizer::make_start_token(const std::string& language) const {
-        return "<" + language + ">";
     }
 
     Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation) {
