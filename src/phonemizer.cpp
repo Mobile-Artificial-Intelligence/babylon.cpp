@@ -5,6 +5,25 @@
 #include <algorithm>
 #include <cmath>
 
+const std::array<const char *, 1> input_names = {"text"};
+const std::array<const char *, 1> output_names = {"output"};
+
+std::vector<float> softmax(const std::vector<float>& logits) {
+    float max_logit = *std::max_element(logits.begin(), logits.end());
+    std::vector<float> probabilities(logits.size());
+
+    float sum = 0.0f;
+    for (float logit : logits) {
+        sum += std::exp(logit - max_logit);
+    }
+
+    for (size_t i = 0; i < logits.size(); ++i) {
+        probabilities[i] = std::exp(logits[i] - max_logit) / sum;
+    }
+    
+    return probabilities;
+}
+
 namespace DeepPhonemizer {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase, bool append_start_end)
         : char_repeats(char_repeats), lowercase(lowercase), append_start_end(append_start_end), pad_token("_"), end_token("<end>") {
@@ -111,22 +130,6 @@ namespace DeepPhonemizer {
 
     std::string SequenceTokenizer::make_start_token(const std::string& language) const {
         return "<" + language + ">";
-    }
-
-    std::vector<float> softmax(const std::vector<float>& logits) {
-        float max_logit = *std::max_element(logits.begin(), logits.end());
-        std::vector<float> probabilities(logits.size());
-
-        float sum = 0.0f;
-        for (float logit : logits) {
-            sum += std::exp(logit - max_logit);
-        }
-
-        for (size_t i = 0; i < logits.size(); ++i) {
-            probabilities[i] = std::exp(logits[i] - max_logit) / sum;
-        }
-
-        return probabilities;
     }
 
     Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation) {

@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <cmath>
 
+const std::array<const char *, 3> input_names = {"input", "input_lengths", "scales"};
+const std::array<const char *, 1> output_names = {"output"};
+
 struct WavHeader {
   uint8_t RIFF[4] = {'R', 'I', 'F', 'F'};
   uint32_t chunk_size;

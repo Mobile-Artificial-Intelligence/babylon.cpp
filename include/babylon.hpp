@@ -38,9 +38,6 @@ namespace DeepPhonemizer {
       std::vector<std::string> g2p(const std::string& text);
 
     private:
-      const std::array<const char *, 1> input_names = {"text"};
-      const std::array<const char *, 1> output_names = {"output"};
-
       std::string lang;
       bool punctuation;
       Ort::Session* session;
@@ -72,9 +69,6 @@ namespace Vits {
       void tts(const std::vector<std::string>& phonemes, const std::string& output_path);
 
     private:
-      const std::array<const char *, 3> input_names = {"input", "input_lengths", "scales"};
-      const std::array<const char *, 1> output_names = {"output"};
-
       int sample_rate;
       std::vector<float> scales;
 
