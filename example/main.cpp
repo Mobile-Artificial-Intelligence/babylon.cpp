@@ -13,11 +13,16 @@ int main(int argc, char** argv) {
 
     text = argv[1];
 
-    DeepPhonemizer::Session dp(dp_model_path);
+    DeepPhonemizer::Session dp(dp_model_path, "en_us", true);
 
     Vits::Session vits(vits_model_path);
 
     std::vector<std::string> phonemes = dp.g2p(text);
+
+    for (const auto& phoneme : phonemes) {
+        std::cout << phoneme << " ";
+    }
+    std::cout << std::endl;
 
     vits.tts(phonemes, "./babylon_output.wav");
 
