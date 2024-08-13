@@ -32,6 +32,7 @@ namespace DeepPhonemizer {
       ~Session();
 
       std::vector<std::string> g2p(const std::string& text);
+      std::vector<int64_t> g2p_tokens(const std::string& text);
 
     private:
       std::string lang;
@@ -39,9 +40,8 @@ namespace DeepPhonemizer {
       Ort::Session* session;
       SequenceTokenizer* text_tokenizer;
       SequenceTokenizer* phoneme_tokenizer;
-      std::unordered_map<std::string, std::vector<std::string>> dictionary;
 
-      std::vector<std::string> g2p_internal(const std::string& text);
+      std::vector<int64_t> g2p_tokens_internal(const std::string& text);
   };
 
   std::vector<std::string> clean_text(const std::string& text);

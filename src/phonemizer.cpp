@@ -8,6 +8,15 @@
 const std::array<const char *, 1> input_names = {"text"};
 const std::array<const char *, 1> output_names = {"output"};
 
+const std::vector<std::string> punctuation_symbols = {
+    ".", 
+    ",", 
+    ":",
+    ";",
+    "!", 
+    "?"
+};
+
 std::vector<float> softmax(const std::vector<float>& logits) {
     float max_logit = *std::max_element(logits.begin(), logits.end());
     std::vector<float> probabilities(logits.size());
@@ -49,6 +58,10 @@ namespace DeepPhonemizer {
         end_index = tokens.size() - 1;
 
         for (const auto& symbol : symbols) {
+            tokens.push_back(symbol);
+        }
+
+        for (const auto& symbol : punctuation_symbols) {
             tokens.push_back(symbol);
         }
     }
@@ -189,40 +202,44 @@ namespace DeepPhonemizer {
     }
 
     std::vector<std::string> Session::g2p(const std::string& text) {
+        // Convert input text to phonemes
+        std::vector<int64_t> phoneme_tokens = g2p_tokens(text);
+
+        // Decode the phoneme tokens
+        return phoneme_tokenizer->decode(phoneme_tokens, true);;
+    }
+
+    std::vector<int64_t> Session::g2p_tokens(const std::string& text) {
         // Clean the input text
         std::vector<std::string> words = clean_text(text);
 
         // Convert each word to phonemes
-        std::vector<std::string> phonemes;
+        std::vector<int64_t> phoneme_ids;
         for (const auto& word : words) {
-            std::vector<std::string> word_phonemes = g2p_internal(word);
+            std::vector<int64_t> word_phoneme_ids = g2p_tokens_internal(word);
             
-            phonemes.insert(phonemes.end(), word_phonemes.begin(), word_phonemes.end());
+            phoneme_ids.insert(phoneme_ids.end(), word_phoneme_ids.begin(), word_phoneme_ids.end());
 
             if (punctuation) {
                 // Check if the word ends with punctuation
                 if (std::ispunct(word.back())) {
-                    phonemes.push_back(std::string(1, word.back()));
+                    auto punct_token = phoneme_tokenizer->operator()(std::string(1, word.back()), lang);
+                    phoneme_ids.insert(phoneme_ids.end(), punct_token.begin(), punct_token.end());
                 }
             }
 
-            phonemes.push_back(" ");
+            phoneme_ids.push_back(0);
         }
 
-        return phonemes;
+        return phoneme_ids;
     }
 
-    std::vector<std::string> Session::g2p_internal(const std::string& text) {
+    std::vector<int64_t> Session::g2p_tokens_internal(const std::string& text) {
         // Check if the input text is longer than one character
         std::string key_text = text;
         std::transform(key_text.begin(), key_text.end(), key_text.begin(), ::tolower);
 
         key_text.erase(std::remove_if(key_text.begin(), key_text.end(), ::ispunct), key_text.end());
-
-        // First check if word is in the dictionary
-        if (dictionary.count(key_text)) {
-            return dictionary.at(key_text);
-        }
 
         // Convert input text to tensor
         std::vector<Ort::Value> input_tensors;
@@ -274,9 +291,6 @@ namespace DeepPhonemizer {
             output_ids_vector[i] = std::distance(probabilities.begin(), max_prob_iter);
         }
 
-        // Convert output IDs to phonemes
-        std::vector<std::string> phonemes = phoneme_tokenizer->decode(output_ids_vector, true);
-
-        return phonemes;
+        return output_ids_vector;
     }
 }
