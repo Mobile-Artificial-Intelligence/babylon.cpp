@@ -3,6 +3,29 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
+
+std::unordered_map<std::string, std::string> abbreviations = {
+    {"mrs", "misess"},
+    {"mr", "mister"},
+    {"dr", "doctor"},
+    {"st", "saint"},
+    {"co", "company"},
+    {"jr", "junior"},
+    {"maj", "major"},
+    {"gen", "general"},
+    {"drs", "doctors"},
+    {"rev", "reverend"},
+    {"lt", "lieutenant"},
+    {"hon", "honorable"},
+    {"sgt", "sergeant"},
+    {"capt", "captain"},
+    {"esq", "esquire"},
+    {"ltd", "limited"},
+    {"col", "colonel"},
+    {"ft", "foot"},
+    {"pty", "proprietary"}
+};
 
 std::vector<std::string> split_into_threes(const std::string& str) {
     std::vector<std::string> parts;
@@ -176,6 +199,9 @@ namespace DeepPhonemizer {
             if (std::all_of(cleaned_word.begin(), cleaned_word.end(), ::isdigit)) {
                 std::vector<std::string> number_words = numbers_to_words(cleaned_word);
                 words.insert(words.end(), number_words.begin(), number_words.end());
+            }
+            else if (abbreviations.find(word) != abbreviations.end()) {
+                words.push_back(abbreviations[word]);
             }
             else {
                 words.push_back(word);
