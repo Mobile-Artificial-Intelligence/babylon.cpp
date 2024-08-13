@@ -15,8 +15,7 @@ namespace DeepPhonemizer {
       std::vector<std::string> decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
   
     private:
-      std::unordered_map<std::string, int> token_to_idx;
-      std::unordered_map<int, std::string> idx_to_token;
+      std::vector<std::string> tokens;
       int char_repeats;
       bool lowercase;
       bool append_start_end;
