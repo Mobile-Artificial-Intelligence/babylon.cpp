@@ -46,13 +46,6 @@ namespace Vits {
         for (const auto& phoneme : phonemes) {
             try {
                 int64_t id = token_to_idx.at(phoneme);
-
-                // This is to handle the subtle difference between deep_phonemizer and espeak-ng
-                if (id == 27 || id == 62) {
-                    phoneme_ids.push_back(120);
-                    phoneme_ids.push_back(0);
-                }
-
                 phoneme_ids.push_back(id);
                 phoneme_ids.push_back(0);
             } 

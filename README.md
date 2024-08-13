@@ -34,13 +34,7 @@ This can be overridden by setting `BABYLON_BUILD_SOURCE` to `ON`.
 #include "babylon.h"
 
 int main() {
-    babylon_g2p_options options = {
-        .language = "en_us",
-        .use_punctuation = true,
-        .use_dictionary = true
-    };
-
-    babylon_g2p_init("path/to/deep_phonemizer.onnx", &options);
+    babylon_g2p_init("path/to/deep_phonemizer.onnx", "en_us", 1);
 
     const char* text = "Hello World";
 
