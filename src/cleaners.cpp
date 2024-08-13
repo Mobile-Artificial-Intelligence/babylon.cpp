@@ -182,10 +182,6 @@ namespace DeepPhonemizer {
             }
         }
 
-        if (!word.empty()) {
-            words.push_back(word);
-        }
-
         return words;
     }
 }

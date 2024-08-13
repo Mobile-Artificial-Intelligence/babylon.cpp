@@ -32,7 +32,12 @@ namespace DeepPhonemizer {
 
   class Session {
     public:
-      Session(const std::string& model_path, const std::string language = "en_us", const bool use_punctuation = false);
+      Session(
+        const std::string& model_path, 
+        const std::string language = "en_us", 
+        const bool use_punctuation = false, 
+        const bool use_dictionary = false
+      );
       ~Session();
 
       std::vector<std::string> g2p(const std::string& text);

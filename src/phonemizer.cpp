@@ -129,7 +129,29 @@ namespace DeepPhonemizer {
         return probabilities;
     }
 
-    Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation) {
+    std::unordered_map<std::string, std::vector<std::string>> parse_dictionary(const std::string& dictionary_str) {
+        std::unordered_map<std::string, std::vector<std::string>> dictionary;
+
+        std::istringstream dictionary_stream(dictionary_str);
+        std::string line;
+        while (std::getline(dictionary_stream, line)) {
+            std::stringstream line_stream(line);
+            std::string word;
+            line_stream >> word;
+
+            std::vector<std::string> phonemes;
+            std::string phoneme;
+            while (line_stream >> phoneme) {
+                phonemes.push_back(phoneme);
+            }
+
+            dictionary[word] = phonemes;
+        }
+
+        return dictionary;
+    }
+
+    Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation, const bool use_dictionary) {
         Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "DeepPhonemizer");
         env.DisableTelemetryEvents();
 
@@ -170,22 +192,9 @@ namespace DeepPhonemizer {
             phoneme_symbols.push_back(phoneme_symbol_buffer);
         }
 
-        std::string dictonary_str = model_metadata.LookupCustomMetadataMapAllocated("dictionary", allocator).get();
-
-        std::istringstream dictionary_stream(dictonary_str);
-        std::string line;
-        while (std::getline(dictionary_stream, line)) {
-            std::stringstream line_stream(line);
-            std::string word;
-            line_stream >> word;
-
-            std::vector<std::string> phonemes;
-            std::string phoneme;
-            while (line_stream >> phoneme) {
-                phonemes.push_back(phoneme);
-            }
-
-            dictionary[word] = phonemes;
+        if (use_dictionary) {
+            std::string dictonary_str = model_metadata.LookupCustomMetadataMapAllocated("dictionary", allocator).get();
+            dictionary = parse_dictionary(dictonary_str);
         }
 
         int char_repeats = model_metadata.LookupCustomMetadataMapAllocated("char_repeats", allocator).get()[0] - '0';

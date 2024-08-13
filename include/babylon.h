@@ -5,13 +5,21 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #ifdef WIN32
    #define BABYLON_EXPORT __declspec(dllexport)
 #else
    #define BABYLON_EXPORT __attribute__((visibility("default"))) __attribute__((used))
 #endif
 
-BABYLON_EXPORT int babylon_g2p_init(const char* model_path, const char* language, int use_punctuation);
+typedef struct {
+   const char* language;
+   bool use_punctuation;
+   bool use_dictionary;
+} babylon_g2p_options;
+
+BABYLON_EXPORT int babylon_g2p_init(const char* model_path, babylon_g2p_options* options);
 
 BABYLON_EXPORT char* babylon_g2p(const char* text);
 

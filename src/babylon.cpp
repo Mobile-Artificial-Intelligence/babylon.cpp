@@ -6,9 +6,9 @@ static DeepPhonemizer::Session* dp;
 static Vits::Session* vits;
 
 extern "C" {
-    BABYLON_EXPORT int babylon_g2p_init(const char* model_path, const char* language, int use_punctuation) {
+    BABYLON_EXPORT int babylon_g2p_init(const char* model_path, babylon_g2p_options* options) {
         try {
-            dp = new DeepPhonemizer::Session(model_path, language, use_punctuation);
+            dp = new DeepPhonemizer::Session(model_path, options->language, options->use_punctuation);
             return 0;
         } 
         catch (const std::exception& e) {
