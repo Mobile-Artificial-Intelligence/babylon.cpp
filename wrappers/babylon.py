@@ -16,6 +16,9 @@ babylon_lib.babylon_g2p_init.restype = ctypes.c_int
 babylon_lib.babylon_g2p.argtypes = [ctypes.c_char_p]
 babylon_lib.babylon_g2p.restype = ctypes.c_char_p
 
+babylon_lib.babylon_g2p_tokens.argtypes = [ctypes.c_char_p]
+babylon_lib.babylon_g2p_tokens.restype = ctypes.POINTER(ctypes.c_int)
+
 babylon_lib.babylon_g2p_free.argtypes = []
 babylon_lib.babylon_g2p_free.restype = None
 
@@ -36,6 +39,19 @@ def init_g2p(model_path, language, use_punctuation):
 def g2p(text):
     result = babylon_lib.babylon_g2p(text.encode('utf-8'))
     return result.decode('utf-8')
+
+# Use G2P with tokens
+def g2p_tokens(text):
+    result_ptr = babylon_lib.babylon_g2p_tokens(text.encode('utf-8'))
+    
+    # Convert the pointer to a Python list, stopping at -1
+    tokens = []
+    i = 0
+    while result_ptr[i] != -1:
+        tokens.append(result_ptr[i])
+        i += 1
+
+    return tokens
 
 # Free G2P resources
 def free_g2p():
@@ -65,6 +81,9 @@ if __name__ == '__main__':
         print('G2P initialized successfully')
         phonemes = g2p(sequence)
         print(f'Phonemes: {phonemes}')
+        
+        tokens = g2p_tokens(sequence)
+        print(f'Tokens: {tokens}')
     else:
         print('Failed to initialize G2P')
 

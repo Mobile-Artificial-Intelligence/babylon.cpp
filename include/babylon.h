@@ -15,6 +15,8 @@ BABYLON_EXPORT int babylon_g2p_init(const char* model_path, const char* language
 
 BABYLON_EXPORT char* babylon_g2p(const char* text);
 
+BABYLON_EXPORT int* babylon_g2p_tokens(const char* text);
+
 BABYLON_EXPORT void babylon_g2p_free(void);
 
 BABYLON_EXPORT int babylon_tts_init(const char* model_path);

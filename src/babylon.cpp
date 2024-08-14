@@ -37,6 +37,30 @@ extern "C" {
         return strdup(phonemes.c_str());
     }
 
+    BABYLON_EXPORT int* babylon_g2p_tokens(const char* text) {
+        if (dp == nullptr) {
+            std::cerr << "DeepPhonemizer session not initialized." << std::endl;
+            return nullptr;
+        }
+
+        std::vector<int64_t> phoneme_ids;
+        try {
+            phoneme_ids = dp->g2p_tokens(text);
+        } 
+        catch (const std::exception& e) {
+            std::cerr << e.what() << std::endl;
+        }
+
+        phoneme_ids.push_back(-1); // Sentinel value
+
+        int* phoneme_ids_arr = new int[phoneme_ids.size()];
+        for (size_t i = 0; i < phoneme_ids.size(); i++) {
+            phoneme_ids_arr[i] = phoneme_ids[i];
+        }
+
+        return phoneme_ids_arr;
+    }
+
     BABYLON_EXPORT void babylon_g2p_free(void) {
         delete dp;
     }

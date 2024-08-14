@@ -26,5 +26,12 @@ int main(int argc, char** argv) {
 
     vits.tts(phonemes, "./babylon_output.wav");
 
+    std::vector<int64_t> phoneme_ids = dp.g2p_tokens(text);
+
+    for (const auto& id : phoneme_ids) {
+        std::cout << id << " ";
+    }
+    std::cout << std::endl;
+
     return 0;
 }
