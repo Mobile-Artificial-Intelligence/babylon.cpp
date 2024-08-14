@@ -183,7 +183,7 @@ jobs:
         run: cp -r models/* build/models
 
       - name: Copy Python Wrapper
-        run: cp -r wrappers/babylon.py build
+        run: cp wrappers/babylon.py build/__init__.py
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
