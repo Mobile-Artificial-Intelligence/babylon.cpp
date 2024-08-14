@@ -39,8 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-x86_64
-          path: |
-            lib/
+          path: lib/
 
   build-macos:
     runs-on: ${{ matrix.os }}
@@ -74,8 +73,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.os == 'macos-13' && 'macos-x86_64' || 'macos-arm64' }}
-          path: |
-            lib/
+          path: lib/
 
   create-universal-dylibs:
     needs: build-macos
@@ -132,8 +130,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows-x86_64
-          path: |
-            lib/
+          path: lib/
 
   build-python:
     needs: 
