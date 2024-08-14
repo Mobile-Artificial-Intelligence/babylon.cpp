@@ -3,11 +3,11 @@ import os
 
 # Load the shared library
 if os.name == 'nt':  # Windows
-    babylon_lib = ctypes.CDLL('libbabylon.dll')
+    babylon_lib = ctypes.CDLL('./windows/libbabylon.dll')
 elif os.name == 'posix':  # macOS
-    babylon_lib = ctypes.CDLL('./libbabylon.dylib')
+    babylon_lib = ctypes.CDLL('./macos/libbabylon.dylib')
 else:  # Linux/Unix
-    babylon_lib = ctypes.CDLL('./babylon.so')
+    babylon_lib = ctypes.CDLL('./linux/libbabylon.so')
 
 # Define the function prototypes
 babylon_lib.babylon_g2p_init.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
@@ -71,8 +71,8 @@ def free_tts():
 
 # Example usage
 if __name__ == '__main__':
-    g2p_model_path = '../models/deep_phonemizer.onnx'
-    tts_model_path = '../models/curie.onnx'
+    g2p_model_path = './models/deep_phonemizer.onnx'
+    tts_model_path = './models/curie.onnx'
     language = 'en_us'
     use_punctuation = 1
     sequence = 'Hello world, This is a python test of babylon'
