@@ -94,9 +94,9 @@ jobs:
       - name: Create Universal dylibs
         run: |
           mkdir -p universal/lib
-          for dylib in macos-x86_64/lib/*.dylib; do
+          for dylib in macos-x86_64/*.dylib; do
             dylib_name=$(basename $dylib)
-            lipo -create macos-x86_64/lib/$dylib_name macos-arm64/lib/$dylib_name -output universal/lib/$dylib_name
+            lipo -create macos-x86_64/$dylib_name macos-arm64/$dylib_name -output universal/$dylib_name
           done
 
       - name: Upload Universal dylibs
@@ -171,13 +171,13 @@ jobs:
             mkdir -p build/models
 
       - name: Copy Linux Build Artifacts
-        run: cp -r linux/lib build/linux
+        run: cp -r linux build/linux
 
       - name: Copy Windows Build Artifacts
-        run: cp -r windows/lib build/windows
+        run: cp -r windows build/windows
 
       - name: Copy macOS Universal Build Artifacts
-        run: cp -r macos/lib build/macos
+        run: cp -r macos build/macos
 
       - name: Copy Models
         run: cp -r models build/models
