@@ -12,7 +12,9 @@ namespace DeepPhonemizer {
     public:
       SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
       std::vector<int64_t> operator()(const std::string& sentence, const std::string& language) const;
-      std::vector<std::string> decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
+      std::vector<std::string> decode(const std::vector<int64_t>& sequence) const;
+      std::vector<int64_t> clean(const std::vector<int64_t>& sequence) const;
+      int64_t get_token(const std::string& token) const;
   
     private:
       std::vector<std::string> tokens;
