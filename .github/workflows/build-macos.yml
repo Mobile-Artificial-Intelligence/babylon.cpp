@@ -53,7 +53,7 @@ jobs:
 
       - name: Code Sign Libraries
         run: |
-          for dylib in build/lib/*.dylib; do
+          for dylib in lib/*.dylib; do
             codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp $dylib
           done
 
