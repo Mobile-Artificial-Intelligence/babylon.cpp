@@ -101,10 +101,13 @@ jobs:
           mkdir -p ~/Library/Developer/Xcode/Provisioning\ Profiles
           echo "${{ secrets.APPLE_PROVISION_PROFILE }}" | base64 --decode > ~/Library/Developer/Xcode/Provisioning\ Profiles/Github_Actions.provisionprofile
 
+      - name: Compress Universal dylibs
+        run: ditto -c -k --sequesterRsrc "universal/lib/libbabylon.dylib" "babylon.zip"
+
       - name: Submit for Notarization
         run: |
           xcrun notarytool store-credentials --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APPLICATION_SPECIFIC_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --validate notorization_profile
-          xcrun notarytool submit --keychain-profile "notorization_profile" --progress --wait universal/lib/libbabylon.dylib
+          xcrun notarytool submit --keychain-profile "notorization_profile" --progress --wait babylon.zip
 
       - name: Staple Notarization
         run: |
