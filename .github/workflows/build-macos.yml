@@ -96,12 +96,7 @@ jobs:
       - name: Submit for Notarization
         run: |
           xcrun notarytool store-credentials --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APPLICATION_SPECIFIC_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --validate notorization_profile
-          SUBMISSION_ID=$(xcrun notarytool submit --keychain-profile "notorization_profile" --progress --wait babylon.zip | grep "id:" | awk '{print $2}')
-          echo "SUBMISSION_ID=$SUBMISSION_ID" >> $GITHUB_ENV
-
-      - name: Verify Notarization
-        run: |
-          xcrun notarytool info --keychain-profile "notorization_profile" ${{ env.SUBMISSION_ID }}
+          xcrun notarytool submit --keychain-profile "notorization_profile" --progress --wait babylon.zip
 
       - name: Staple Notarization
         run: |
