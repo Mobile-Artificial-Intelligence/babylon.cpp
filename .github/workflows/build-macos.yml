@@ -100,7 +100,7 @@ jobs:
 
       - name: Staple Notarization
         run: |
-          xcrun stapler staple "universal/lib/libbabylon.dylib"
+          xcrun stapler staple -v "universal/lib/libbabylon.dylib"
 
       - name: Upload Universal dylibs
         uses: actions/upload-artifact@v3
