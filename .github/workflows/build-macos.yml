@@ -51,9 +51,9 @@ jobs:
           mkdir -p ~/Library/Developer/Xcode/Provisioning\ Profiles
           echo "${{ secrets.APPLE_PROVISION_PROFILE }}" | base64 --decode > ~/Library/Developer/Xcode/Provisioning\ Profiles/Github_Actions.provisionprofile
 
-      - name: Code Sign Universal Libraries
+      - name: Code Sign ${{ matrix.os == 'macos-13' && 'x86_64' || 'arm64' }} Libraries
         run: |
-          codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp universal/lib/libbabylon.dylib
+          codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp lib/libbabylon.dylib
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
