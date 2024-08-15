@@ -90,8 +90,8 @@ jobs:
         run: |
           codesign --force --verbose --options runtime --timestamp --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" universal/lib/libbabylon.dylib
 
-      - name: Compress Universal dylibs
-        run: ditto -c -k --sequesterRsrc "universal/lib/libbabylon.dylib" "babylon.zip"
+      - name: Compress Universal dylib
+        run: ditto -c -k --sequesterRsrc --keepParent universal/lib/libbabylon.dylib babylon.zip
 
       - name: Submit for Notarization
         run: |
