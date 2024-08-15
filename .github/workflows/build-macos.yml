@@ -101,10 +101,6 @@ jobs:
           mkdir -p ~/Library/Developer/Xcode/Provisioning\ Profiles
           echo "${{ secrets.APPLE_PROVISION_PROFILE }}" | base64 --decode > ~/Library/Developer/Xcode/Provisioning\ Profiles/Github_Actions.provisionprofile
 
-      - name: Code Sign Universal Libraries
-        run: |
-          codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp universal/lib/libbabylon.dylib
-
       - name: Compress Universal dylibs
         run: ditto -c -k --sequesterRsrc "universal/lib/" "babylon.zip" 
 
