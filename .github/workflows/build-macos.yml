@@ -40,6 +40,23 @@ jobs:
       - name: Build
         run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          p12-password: ${{ secrets.APPLE_PASSWORD }}
+
+      - name: Install the provisioning profile
+        run: |
+          mkdir -p ~/Library/Developer/Xcode/Provisioning\ Profiles
+          echo "${{ secrets.APPLE_PROVISION_PROFILE }}" | base64 --decode > ~/Library/Developer/Xcode/Provisioning\ Profiles/Github_Actions.provisionprofile
+
+      - name: Code Sign Libraries
+        run: |
+          for dylib in build/lib/*.dylib; do
+            codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp $dylib
+          done
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -74,6 +91,37 @@ jobs:
 
       - name: Add Include Directory
         run: cp -r macos-x86_64/include universal/include
+
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          p12-password: ${{ secrets.APPLE_PASSWORD }}
+
+      - name: Install the provisioning profile
+        run: |
+          mkdir -p ~/Library/Developer/Xcode/Provisioning\ Profiles
+          echo "${{ secrets.APPLE_PROVISION_PROFILE }}" | base64 --decode > ~/Library/Developer/Xcode/Provisioning\ Profiles/Github_Actions.provisionprofile
+
+      - name: Code Sign Universal Libraries
+        run: |
+          for dylib in universal/lib/*.dylib; do
+            codesign --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" --options runtime --timestamp $dylib
+          done
+
+      - name: Compress Universal dylibs
+        run: ditto -c -k --sequesterRsrc "universal/lib/" "babylon.zip" 
+
+      - name: Submit for Notarization
+        run: |
+          xcrun notarytool store-credentials --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.APPLE_APPLICATION_SPECIFIC_PASSWORD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --validate notorization_profile
+          xcrun notarytool submit --keychain-profile "notorization_profile" --progress --wait babylon.zip
+
+      - name: Staple Notarization
+        run: |
+          for dylib in universal/lib/*.dylib; do
+            xcrun stapler staple $dylib
+          done
 
       - name: Upload Universal dylibs
         uses: actions/upload-artifact@v3
