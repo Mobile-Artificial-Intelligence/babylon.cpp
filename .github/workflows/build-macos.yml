@@ -88,7 +88,7 @@ jobs:
 
       - name: Code Sign Universal Libraries
         run: |
-          codesign --deep --force --verbose --options runtime --timestamp --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" universal/lib/libbabylon.dylib
+          codesign --force --verbose --options runtime --timestamp --sign "${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}" universal/lib/libbabylon.dylib
 
       - name: Compress Universal dylibs
         run: ditto -c -k --sequesterRsrc "universal/lib/libbabylon.dylib" "babylon.zip"
