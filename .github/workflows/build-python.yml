@@ -1,0 +1,192 @@
+name: Build Python
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-python.yml'
+      - 'wrappers/**'
+      - 'src/**'
+      - 'include/**'
+      - 'example/**'
+      - 'CMakeLists.txt'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install CMake
+        run: sudo apt-get update && sudo apt-get install -y cmake
+
+      - name: Determine CPU Cores
+        id: cpu-info
+        run: echo "CPU_CORES=$(nproc)" >> $GITHUB_ENV
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-x86_64
+          path: lib/
+
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-13, macos-14]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      
+      - name: Install Homebrew
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+      - name: Update CMake
+        run: brew install cmake
+
+      - name: Determine CPU Cores
+        id: cpu-info
+        run: echo "CPU_CORES=$(sysctl -n hw.ncpu)" >> $GITHUB_ENV
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os == 'macos-13' && 'macos-x86_64' || 'macos-arm64' }}
+          path: lib/
+
+  create-universal-dylibs:
+    needs: build-macos
+    runs-on: macos-latest
+    steps:
+      - name: Download x86_64 Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-x86_64
+          path: macos-x86_64
+
+      - name: Download arm64 Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-arm64
+          path: macos-arm64
+
+      - name: Create Universal dylibs
+        run: |
+          mkdir -p universal/lib
+          for dylib in macos-x86_64/*.dylib; do
+            dylib_name=$(basename $dylib)
+            lipo -create macos-x86_64/$dylib_name macos-arm64/$dylib_name -output universal/$dylib_name
+          done
+
+      - name: Upload Universal dylibs
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-universal
+          path: universal/
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install CMake
+        run: choco install -y cmake
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -- /m:4
+
+      - name: Copy Everything from \build\Release\ to \lib
+        run: xcopy /E /Y build\Release\ lib\
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-x86_64
+          path: lib/
+
+  build-python:
+    needs: 
+        - build-linux
+        - build-windows
+        - create-universal-dylibs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+    
+      - name: Download Linux Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-x86_64
+          path: linux
+
+      - name: Download Windows Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-x86_64
+          path: windows
+
+      - name: Download macOS Universal Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-universal
+          path: macos
+
+      - name: Create Build Directories
+        run: |
+            mkdir -p build/linux
+            mkdir -p build/windows
+            mkdir -p build/macos
+            mkdir -p build/models
+
+      - name: Copy Linux Build Artifacts
+        run: cp -r linux/* build/linux
+
+      - name: Copy Windows Build Artifacts
+        run: cp -r windows/* build/windows
+
+      - name: Copy macOS Universal Build Artifacts
+        run: cp -r macos/* build/macos
+
+      - name: Copy Models
+        run: cp -r models/* build/models
+
+      - name: Copy Python Wrapper
+        run: cp wrappers/babylon.py build/__init__.py
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+            name: python
+            path: build/

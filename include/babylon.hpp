@@ -12,11 +12,12 @@ namespace DeepPhonemizer {
     public:
       SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase = true, bool append_start_end = true);
       std::vector<int64_t> operator()(const std::string& sentence, const std::string& language) const;
-      std::vector<std::string> decode(const std::vector<int64_t>& sequence, bool remove_special_tokens = false) const;
+      std::vector<std::string> decode(const std::vector<int64_t>& sequence) const;
+      std::vector<int64_t> clean(const std::vector<int64_t>& sequence) const;
+      int64_t get_token(const std::string& token) const;
   
     private:
-      std::unordered_map<std::string, int> token_to_idx;
-      std::unordered_map<int, std::string> idx_to_token;
+      std::vector<std::string> tokens;
       int char_repeats;
       bool lowercase;
       bool append_start_end;
@@ -25,9 +26,6 @@ namespace DeepPhonemizer {
       std::string pad_token;
       std::string end_token;
       std::unordered_set<std::string> special_tokens;
-  
-      int get_start_index(const std::string& language) const;
-      std::string make_start_token(const std::string& language) const;
   };
 
   class Session {
@@ -36,19 +34,16 @@ namespace DeepPhonemizer {
       ~Session();
 
       std::vector<std::string> g2p(const std::string& text);
+      std::vector<int64_t> g2p_tokens(const std::string& text);
 
     private:
-      const std::array<const char *, 1> input_names = {"text"};
-      const std::array<const char *, 1> output_names = {"output"};
-
       std::string lang;
       bool punctuation;
       Ort::Session* session;
       SequenceTokenizer* text_tokenizer;
       SequenceTokenizer* phoneme_tokenizer;
-      std::unordered_map<std::string, std::vector<std::string>> dictionary;
 
-      std::vector<std::string> g2p_internal(const std::string& text);
+      std::vector<int64_t> g2p_tokens_internal(const std::string& text);
   };
 
   std::vector<std::string> clean_text(const std::string& text);
@@ -72,9 +67,6 @@ namespace Vits {
       void tts(const std::vector<std::string>& phonemes, const std::string& output_path);
 
     private:
-      const std::array<const char *, 3> input_names = {"input", "input_lengths", "scales"};
-      const std::array<const char *, 1> output_names = {"output"};
-
       int sample_rate;
       std::vector<float> scales;
 

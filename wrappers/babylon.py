@@ -1,13 +1,17 @@
 import ctypes
 import os
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+symbols = " abdefghijklmnoprstuvwxyzæçðøŋœɐɑɔəɛɜɹɡɪʁʃʊʌʏʒʔ'ˌː ̃ ̍ ̥ ̩ ̯ ͡θ.,:;?!\"()-"
+
 # Load the shared library
 if os.name == 'nt':  # Windows
-    babylon_lib = ctypes.CDLL('libbabylon.dll')
+    babylon_lib = ctypes.CDLL(os.path.join(current_dir, 'windows', 'libbabylon.dll'))
 elif os.name == 'posix':  # macOS
-    babylon_lib = ctypes.CDLL('./libbabylon.dylib')
+    babylon_lib = ctypes.CDLL(os.path.join(current_dir, 'macos', 'libbabylon.dylib'))
 else:  # Linux/Unix
-    babylon_lib = ctypes.CDLL('./babylon.so')
+    babylon_lib = ctypes.CDLL(os.path.join(current_dir, 'linux', 'libbabylon.so'))
 
 # Define the function prototypes
 babylon_lib.babylon_g2p_init.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
@@ -15,6 +19,9 @@ babylon_lib.babylon_g2p_init.restype = ctypes.c_int
 
 babylon_lib.babylon_g2p.argtypes = [ctypes.c_char_p]
 babylon_lib.babylon_g2p.restype = ctypes.c_char_p
+
+babylon_lib.babylon_g2p_tokens.argtypes = [ctypes.c_char_p]
+babylon_lib.babylon_g2p_tokens.restype = ctypes.POINTER(ctypes.c_int)
 
 babylon_lib.babylon_g2p_free.argtypes = []
 babylon_lib.babylon_g2p_free.restype = None
@@ -37,6 +44,19 @@ def g2p(text):
     result = babylon_lib.babylon_g2p(text.encode('utf-8'))
     return result.decode('utf-8')
 
+# Use G2P with tokens
+def g2p_tokens(text):
+    result_ptr = babylon_lib.babylon_g2p_tokens(text.encode('utf-8'))
+    
+    # Convert the pointer to a Python list, stopping at -1
+    tokens = []
+    i = 0
+    while result_ptr[i] != -1:
+        tokens.append(result_ptr[i])
+        i += 1
+
+    return tokens
+
 # Free G2P resources
 def free_g2p():
     babylon_lib.babylon_g2p_free()
@@ -55,8 +75,8 @@ def free_tts():
 
 # Example usage
 if __name__ == '__main__':
-    g2p_model_path = '../models/deep_phonemizer.onnx'
-    tts_model_path = '../models/curie.onnx'
+    g2p_model_path = os.path.join(current_dir, "models", "deep_phonemizer.onnx")
+    tts_model_path = os.path.join(current_dir, "models", "curie.onnx")
     language = 'en_us'
     use_punctuation = 1
     sequence = 'Hello world, This is a python test of babylon'
@@ -65,6 +85,9 @@ if __name__ == '__main__':
         print('G2P initialized successfully')
         phonemes = g2p(sequence)
         print(f'Phonemes: {phonemes}')
+        
+        tokens = g2p_tokens(sequence)
+        print(f'Tokens: {tokens}')
     else:
         print('Failed to initialize G2P')
 
