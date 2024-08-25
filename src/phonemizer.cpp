@@ -321,7 +321,7 @@ namespace DeepPhonemizer {
         std::vector<int64_t> output_shape = output_tensors.front().GetTensorTypeAndShapeInfo().GetShape();
 
         // Ensure the output shape is as expected: {1, 50, 53}
-        if (output_shape.size() != 3 || output_shape[0] != 1 || output_shape[1] != 50 || output_shape[2] != 53) {
+        if (output_shape.size() != 3 || output_shape[0] != 1 || output_shape[1] != 50 || output_shape[2] != 82) {
             throw std::runtime_error("Unexpected output shape from the model.");
         }
 
