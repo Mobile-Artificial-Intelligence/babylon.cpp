@@ -3,8 +3,11 @@ import onnx
 from dp.model.model import AutoregressiveTransformer, ForwardTransformer, load_checkpoint
 
 # Load your model checkpoint
-checkpoint_path = './en_us_cmudict_ipa_forward.pt'
-model, config = load_checkpoint(checkpoint_path)
+checkpoint_path = './latin_ipa_forward.pt'
+model, torch_meta = load_checkpoint(checkpoint_path)
+config = torch_meta['config']
+phoneme_dict = torch_meta['phoneme_dict']
+preprocessing = config['preprocessing']
 
 # Extract vocabulary sizes directly from the model's embedding layers
 if isinstance(model, ForwardTransformer):
@@ -71,14 +74,47 @@ torch.onnx.export(
 # Verify the ONNX model
 onnx_model = onnx.load(onnx_file_path)
 
+languages = ''
+for language in preprocessing['languages']:
+    languages += language + ' '
+print(f"Languages: {languages}")
+
+text_symbols = ''
+for symbol in preprocessing['text_symbols']:
+    text_symbols += symbol + ' '
+print(f"Text symbols: {text_symbols}")
+
+phoneme_symbols = ''
+for symbol in preprocessing['phoneme_symbols']:
+    phoneme_symbols += symbol + ' '
+phoneme_symbols += '. , : ; ? ! \" ( ) -'
+print(f"Phoneme symbols: {phoneme_symbols}")
+
+char_repeats = f"{preprocessing['char_repeats']}"
+print(f"Char repeats: {char_repeats}")
+
+lowercase = f"{'1' if preprocessing['lowercase'] else '0'}"
+print(f"Lowercase: {lowercase}")
+
+n_val = f"{preprocessing['n_val']}"
+print(f"n_val: {n_val}")
+
 # Add metadata to the ONNX model
 metadata = {
-    "languages": "de en_us",
-    "text_symbols": "a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ä ö ü Ä Ö Ü ß",
-    "phoneme_symbols": "a b d e f g h i j k l m n o p r s t u v w x y z æ ç ð ø ŋ œ ɐ ɑ ɔ ə ɛ ɜ ɹ ɡ ɪ ʁ ʃ ʊ ʌ ʏ ʒ ʔ ' ˌ ː ̃ ̍ ̥ ̩ ̯ ͡ θ . , : ; ? ! \" ( ) -",
-    "char_repeats": "3" if isinstance(model, ForwardTransformer) else "1",
-    "lowercase": "1"
+    "languages": languages,
+    "text_symbols": text_symbols,
+    "phoneme_symbols": phoneme_symbols,
+    "char_repeats": char_repeats,
+    "lowercase": lowercase,
+    "n_val": n_val
 }
+
+for language in preprocessing['languages']:
+    language_dict = phoneme_dict[language]
+    language_dict_str = "\n".join(f"{key}\t{value}" for key, value in language_dict.items())
+    metadata[f"{language}_dictionary"] = language_dict_str
+
+print(metadata.keys())
 
 for key, value in metadata.items():
     meta = onnx_model.metadata_props.add()
