@@ -11,7 +11,13 @@ extern "C" {
    #define BABYLON_EXPORT __attribute__((visibility("default"))) __attribute__((used))
 #endif
 
-BABYLON_EXPORT int babylon_g2p_init(const char* model_path, const char* language, int use_punctuation);
+typedef struct {
+   const char* language;
+   const unsigned char use_dictionaries;
+   const unsigned char use_punctuation;
+} babylon_g2p_options_t;
+
+BABYLON_EXPORT int babylon_g2p_init(const char* model_path, babylon_g2p_options_t options);
 
 BABYLON_EXPORT char* babylon_g2p(const char* text);
 

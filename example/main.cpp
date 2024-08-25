@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     text = argv[1];
 
-    DeepPhonemizer::Session dp(dp_model_path, "en_us", true);
+    DeepPhonemizer::Session dp(dp_model_path, "en_us", true, true);
 
     Vits::Session vits(vits_model_path);
 

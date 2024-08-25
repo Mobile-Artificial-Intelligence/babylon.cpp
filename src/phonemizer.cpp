@@ -24,6 +24,26 @@ std::vector<float> softmax(const std::vector<float>& logits) {
     return probabilities;
 }
 
+std::unordered_map<std::string, std::vector<std::string>> process_dictionary(const std::string& dictonary_str) {
+    std::unordered_map<std::string, std::vector<std::string>> dictionary;
+    std::istringstream dictionary_stream(dictonary_str);
+
+    std::string line;
+    while (std::getline(dictionary_stream, line)) {
+        std::stringstream line_stream(line);
+        std::string word;
+        line_stream >> word;
+        std::vector<std::string> phonemes;
+        std::string phoneme;
+        while (line_stream >> phoneme) {
+            phonemes.push_back(phoneme);
+        }
+        dictionary[word] = phonemes;
+    }
+
+    return dictionary;
+}
+
 namespace DeepPhonemizer {
     SequenceTokenizer::SequenceTokenizer(const std::vector<std::string>& symbols, const std::vector<std::string>& languages, int char_repeats, bool lowercase, bool append_start_end)
         : char_repeats(char_repeats), lowercase(lowercase), append_start_end(append_start_end), pad_token(" "), end_token("<end>") {
@@ -140,7 +160,7 @@ namespace DeepPhonemizer {
         return -1;
     }
 
-    Session::Session(const std::string& model_path, const std::string language, const bool use_punctuation) {
+    Session::Session(const std::string& model_path, const std::string language, const bool use_dictionaries, const bool use_punctuation) {
         Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "DeepPhonemizer");
         env.DisableTelemetryEvents();
 
@@ -148,7 +168,7 @@ namespace DeepPhonemizer {
         session_options.SetIntraOpNumThreads(1);
         session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
-        session = new Ort::Session(env, (const ORTCHAR_T *) model_path.c_str(), session_options);
+        this->session = new Ort::Session(env, (const ORTCHAR_T *) model_path.c_str(), session_options);
 
         // Load metadata from the model
         Ort::ModelMetadata model_metadata = session->GetModelMetadata();
@@ -181,6 +201,14 @@ namespace DeepPhonemizer {
             phoneme_symbols.push_back(phoneme_symbol_buffer);
         }
 
+        if (use_dictionaries) {
+            for (const auto& lang : languages) {
+                std::string key = lang + "_dictionary";
+                std::string dictonary_str = model_metadata.LookupCustomMetadataMapAllocated(key.c_str(), allocator).get();
+                this->dictionaries[lang] = process_dictionary(dictonary_str);
+            }
+        }
+
         int char_repeats = model_metadata.LookupCustomMetadataMapAllocated("char_repeats", allocator).get()[0] - '0';
 
         bool lowercase = model_metadata.LookupCustomMetadataMapAllocated("lowercase", allocator).get()[0] == '1';
@@ -189,10 +217,11 @@ namespace DeepPhonemizer {
             throw std::runtime_error("Language not supported.");
         }
 
-        lang = language;
-        punctuation = use_punctuation;
-        text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
-        phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
+        this->language = language;
+        this->use_dictionaries = use_dictionaries;
+        this->use_punctuation = use_punctuation;
+        this->text_tokenizer = new SequenceTokenizer(text_symbols, languages, char_repeats, lowercase);
+        this->phoneme_tokenizer = new SequenceTokenizer(phoneme_symbols, languages, 1, false);
     }
 
     Session::~Session() {
@@ -222,7 +251,7 @@ namespace DeepPhonemizer {
             
             phoneme_ids.insert(phoneme_ids.end(), cleaned_word_phoneme_ids.begin(), cleaned_word_phoneme_ids.end());
 
-            if (punctuation) {
+            if (use_punctuation) {
                 auto back_token = phoneme_tokenizer->get_token(std::string(1, word.back()));
 
                 // Check if the word ends with punctuation
@@ -244,9 +273,21 @@ namespace DeepPhonemizer {
 
         key_text.erase(std::remove_if(key_text.begin(), key_text.end(), ::ispunct), key_text.end());
 
+        // First check if word is in the dictionary
+        if (dictionaries[language].count(key_text) && use_dictionaries) {
+            auto token_str = dictionaries[language].at(key_text);
+
+            std::vector<int64_t> tokens;
+            for (const auto& token : token_str) {
+                tokens.push_back(phoneme_tokenizer->get_token(token));
+            }
+
+            return tokens;
+        }
+
         // Convert input text to tensor
         std::vector<Ort::Value> input_tensors;
-        std::vector<int64_t> input_ids = text_tokenizer->operator()(text, lang);
+        std::vector<int64_t> input_ids = text_tokenizer->operator()(text, language);
 
         std::vector<int64_t> input_shape = {1, static_cast<int64_t>(input_ids.size())};
         Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);

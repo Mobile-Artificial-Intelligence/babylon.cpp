@@ -111,7 +111,7 @@ metadata = {
 
 for language in preprocessing['languages']:
     language_dict = phoneme_dict[language]
-    language_dict_str = "\n".join(f"{key}\t{value}" for key, value in language_dict.items())
+    language_dict_str = "\n".join(f"{key}\t{' '.join(value)}" for key, value in language_dict.items())
     metadata[f"{language}_dictionary"] = language_dict_str
 
 print(metadata.keys())
