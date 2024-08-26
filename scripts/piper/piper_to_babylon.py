@@ -1,8 +1,8 @@
 import json
 import onnx
 
-onnx_file_path = './en_US-curie-medium-V1.4.onnx'
-config_file_path = './en_US-curie-medium-V1.4.onnx.json'
+onnx_file_path = './en_US-amy-medium.onnx'
+config_file_path = './en_US-amy-medium.onnx.json'
 
 # Verify the ONNX model
 onnx_model = onnx.load(onnx_file_path)
@@ -36,7 +36,7 @@ for key, value in metadata.items():
     meta.key = key
     meta.value = str(value)
 
-onnx.save(onnx_model, "./curie.onnx")
+onnx.save(onnx_model, "./amy.onnx")
 onnx.checker.check_model(onnx_model)
 
 print("Metadata added successfully!")

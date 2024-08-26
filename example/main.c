@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     babylon_g2p_init("./models/deep_phonemizer.onnx", options);
 
-    babylon_tts_init("./models/curie.onnx");
+    babylon_tts_init("./models/amy.onnx");
 
     babylon_tts(argv[1], "./c_output.wav");
 
