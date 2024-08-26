@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     }
     std::cout << std::endl;
 
-    vits.tts(phonemes, "./babylon_output.wav");
+    vits.tts(phonemes, "./cpp_output.wav");
 
     std::vector<int64_t> phoneme_ids = dp.g2p_tokens(text);
 

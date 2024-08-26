@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
     babylon_tts_init("./models/curie.onnx");
 
-    babylon_tts(argv[1], "path/to/output.wav");
+    babylon_tts(argv[1], "./c_output.wav");
 
     babylon_tts_free();
     
