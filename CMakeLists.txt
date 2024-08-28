@@ -42,9 +42,16 @@ set_target_properties(
     babylon
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${BABYLON_LIB_INSTALL_DIR}
-    BUILD_WITH_INSTALL_RPATH TRUE
-    INSTALL_RPATH "$ORIGIN"
 )
+
+# if linux or windows
+if(NOT APPLE AND NOT ANDROID)
+    set_target_properties(
+        babylon
+        BUILD_WITH_INSTALL_RPATH TRUE
+        INSTALL_RPATH "$ORIGIN"
+    )
+endif()
 
 if(BABYLON_BUILD_SOURCE OR ANDROID)
     # Set ONNX Runtime source directory

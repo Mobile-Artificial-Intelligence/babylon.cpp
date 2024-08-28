@@ -2,7 +2,7 @@
     "dataset": "curie",
     "audio": {
         "sample_rate": 22050,
-        "quality": "curie"
+        "quality": "medium"
     },
     "espeak": {
         "voice": "en-us"
