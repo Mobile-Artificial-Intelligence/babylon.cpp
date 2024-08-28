@@ -48,6 +48,7 @@ set_target_properties(
 if(NOT APPLE AND NOT ANDROID)
     set_target_properties(
         babylon
+        PROPERTIES
         BUILD_WITH_INSTALL_RPATH TRUE
         INSTALL_RPATH "$ORIGIN"
     )
