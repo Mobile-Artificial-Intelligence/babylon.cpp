@@ -41,7 +41,7 @@ jobs:
         run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os == 'macos-13' && 'macos-x86_64' || 'macos-arm64' }}
           path: |
@@ -76,7 +76,7 @@ jobs:
         run: cp -r macos-x86_64/include universal/include
 
       - name: Upload Universal dylibs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-universal
           path: universal/

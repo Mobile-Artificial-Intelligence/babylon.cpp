@@ -34,7 +34,7 @@ jobs:
         run: xcopy /E /Y build\Release\ lib\
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-x86_64
           path: |

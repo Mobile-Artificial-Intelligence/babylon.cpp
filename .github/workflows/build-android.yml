@@ -52,7 +52,7 @@ jobs:
         run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-${{ matrix.abi }}
           path: |

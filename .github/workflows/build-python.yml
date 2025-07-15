@@ -36,7 +36,7 @@ jobs:
         run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-x86_64
           path: lib/
@@ -70,7 +70,7 @@ jobs:
         run: cmake --build build --config Release -- -j${{ env.CPU_CORES }}
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os == 'macos-13' && 'macos-x86_64' || 'macos-arm64' }}
           path: lib/
@@ -100,7 +100,7 @@ jobs:
           done
 
       - name: Upload Universal dylibs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-universal
           path: universal/
@@ -127,7 +127,7 @@ jobs:
         run: xcopy /E /Y build\Release\ lib\
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-x86_64
           path: lib/
@@ -186,7 +186,7 @@ jobs:
         run: cp wrappers/babylon.py build/__init__.py
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: python
             path: build/
