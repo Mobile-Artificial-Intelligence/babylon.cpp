@@ -1,5 +1,4 @@
 #include "babylon.h"
-#include "babylon.hpp"
 #include <iostream>
 
 static DeepPhonemizer::Session* dp;
