@@ -68,6 +68,8 @@ set(onnxruntime_BUILD_SHARED_LIB ON)
 set(onnxruntime_BUILD_UNIT_TESTS OFF)   
 
 # Add ONNX Runtime subdirectory
+set(FETCHCONTENT_SOURCE_DIR_EIGEN "/tmp/eigen")
+set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake)   
 
 # Set the output directory for the shared library
